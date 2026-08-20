@@ -356,7 +356,6 @@ async function parseDetailPage(detailPage, nameVariantHint) {
     cohort: COHORT,
     source: "darpan-portal",
     source_url: SOURCE_URL,
-    status: "clean",
     sections,
   };
 }

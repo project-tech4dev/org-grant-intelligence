@@ -5,7 +5,6 @@
   "cohort": "core-cohort-2026",
   "source": "darpan-portal",
   "source_url": "https://ngodarpan.gov.in/#/search-ngo",
-  "status": "clean",
   "sections": {
     "npo_details": {
       "darpan_id": "AS/2018/0206049",
