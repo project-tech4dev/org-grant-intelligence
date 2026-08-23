@@ -1,0 +1,35 @@
+services:
+  backend:
+    build: ./backend
+    env_file: .env
+    environment:
+      # Keep the SQLite checkpointer on a named volume so threads survive restarts.
+      - CHECKPOINT_DB=/data/checkpoints.sqlite
+      - DOWNLOADS_DIR=/data/downloads
+    volumes:
+      - checkpoints:/data
+      # Files the agent downloads land here on your machine.
+      - ./downloads:/data/downloads
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "python",
+          "-c",
+          "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')",
+        ]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "3005:80"
+    depends_on:
+      backend:
+        condition: service_healthy
+
+volumes:
+  checkpoints:

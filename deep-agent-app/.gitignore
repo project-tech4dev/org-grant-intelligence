@@ -1,0 +1,16 @@
+# Secrets
+.env
+
+# Python
+backend/.venv/
+__pycache__/
+*.pyc
+*.sqlite
+*.sqlite-*
+
+# Node
+frontend/node_modules/
+frontend/dist/
+
+# Data
+data/
