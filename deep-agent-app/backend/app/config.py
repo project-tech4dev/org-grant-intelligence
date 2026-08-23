@@ -56,7 +56,7 @@ class Settings(BaseSettings):
     # Where download_file saves files; mounted to ./downloads on the host in Docker.
     downloads_dir: str = "downloads"
 
-    recursion_limit: int = 50
+    recursion_limit: int = 100
     allowed_origins: str = "http://localhost:5173,http://localhost:3000"
 
     @property

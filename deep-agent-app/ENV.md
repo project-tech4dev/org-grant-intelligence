@@ -33,7 +33,7 @@ Only the API key for your chosen provider is required; the other two can stay em
 | `MCP_SERVERS` | `{}` | JSON map of extra MCP servers, merged into the tool registry — see below |
 | `GITHUB_TOOL_ALLOWLIST` | (safe built-in list) | Comma-separated GitHub MCP tool names the agent may use. The default excludes merge/delete operations |
 | `DOWNLOADS_DIR` | `downloads` | Folder where the `download_file` tool saves files. In Docker this is `/data/downloads`, bind-mounted to `./downloads` on your machine |
-| `RECURSION_LIMIT` | `50` | Max agent steps per turn (runaway-loop protection) |
+| `RECURSION_LIMIT` | `100` | Max agent steps per turn (runaway-loop protection) |
 | `ALLOWED_ORIGINS` | `http://localhost:5173,http://localhost:3000` | Comma-separated CORS origins (only relevant in dev; in Docker the nginx proxy makes this moot) |
 | `LANGSMITH_TRACING` | `false` | Set `true` (plus `LANGSMITH_API_KEY`) for free tracing at [smith.langchain.com](https://smith.langchain.com) |
 
