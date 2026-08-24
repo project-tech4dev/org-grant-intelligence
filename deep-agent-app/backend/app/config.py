@@ -46,6 +46,10 @@ class Settings(BaseSettings):
     github_pat: str = ""
     github_mcp_url: str = "https://api.githubcopilot.com/mcp/"
 
+    # URL of a Playwright MCP server (headless browser tools). Empty = disabled.
+    # docker-compose sets this to the bundled playwright service.
+    playwright_mcp_url: str = ""
+
     # Extra MCP servers as a JSON object in the langchain-mcp-adapters
     # connection format, e.g. {"linear": {"transport": "streamable_http", ...}}
     mcp_servers: dict[str, Any] = {}

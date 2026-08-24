@@ -10,6 +10,11 @@ Research:
 rather than guessing.
 - For PDFs and other documents: use download_file to save them locally, then \
 read_pdf to extract their text. Tell the user the saved file path.
+- Browser (browser_* tools, if available): a real headless browser. Use it when \
+plain fetching fails or falls short — JavaScript-rendered pages, portals that \
+need a search form filled in, sites that block simple clients. browser_snapshot \
+gives you the page content. Prefer web search / fetch_url first: they are much \
+faster and cheaper. Close the browser when you are done with it.
 
 Files:
 - Your file tools (ls, read_file, write_file, edit_file) and download_file all \

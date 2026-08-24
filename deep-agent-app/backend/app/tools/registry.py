@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import logging
+from contextlib import AsyncExitStack
 from typing import Any
 
 from app.config import Settings
@@ -13,7 +14,7 @@ from app.tools.web import fetch_url, make_web_search
 logger = logging.getLogger(__name__)
 
 
-async def build_tools(settings: Settings) -> list[Any]:
+async def build_tools(settings: Settings, stack: AsyncExitStack) -> list[Any]:
     tools: list[Any] = [fetch_url, download_file, read_pdf]
 
     if settings.tavily_api_key:
@@ -21,7 +22,7 @@ async def build_tools(settings: Settings) -> list[Any]:
     else:
         logger.warning("TAVILY_API_KEY not set — web search tool disabled")
 
-    tools.extend(await load_mcp_tools(settings))
+    tools.extend(await load_mcp_tools(settings, stack))
 
     logger.info("Tool registry ready: %s", [t.name for t in tools])
     return tools

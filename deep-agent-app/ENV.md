@@ -30,6 +30,7 @@ Only the API key for your chosen provider is required; the other two can stay em
 |---|---|---|
 | `CHECKPOINT_DB` | `checkpoints.sqlite` | Path to the SQLite checkpoint file, or a `postgresql://user:pass@host/db` URL to use Postgres instead |
 | `GITHUB_MCP_URL` | `https://api.githubcopilot.com/mcp/` | GitHub's hosted MCP endpoint. Point at a local `github-mcp-server` if you need air-gapped operation |
+| `PLAYWRIGHT_MCP_URL` | (empty) | URL of a Playwright MCP server for headless-browser tools. docker-compose sets it to the bundled `playwright` service automatically; for dev outside Docker run `npx @playwright/mcp --port 8931` and set `http://localhost:8931/mcp` |
 | `MCP_SERVERS` | `{}` | JSON map of extra MCP servers, merged into the tool registry — see below |
 | `GITHUB_TOOL_ALLOWLIST` | (safe built-in list) | Comma-separated GitHub MCP tool names the agent may use. The default excludes merge/delete operations |
 | `DOWNLOADS_DIR` | `downloads` | Folder where the `download_file` tool saves files. In Docker this is `/data/downloads`, bind-mounted to `./downloads` on your machine |

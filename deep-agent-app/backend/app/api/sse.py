@@ -71,7 +71,7 @@ def _extract_sources(tool_name: str, tool_input: Any, output_text: str) -> list[
                     sources.append({"url": result["url"], "title": result.get("title")})
         except (ValueError, AttributeError):
             pass
-    elif tool_name == "fetch_url":
+    elif tool_name in ("fetch_url", "browser_navigate"):
         url = (tool_input or {}).get("url") if isinstance(tool_input, dict) else None
         if url:
             sources.append({"url": url, "title": None})

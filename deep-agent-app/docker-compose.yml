@@ -6,6 +6,10 @@ services:
       # Keep the SQLite checkpointer on a named volume so threads survive restarts.
       - CHECKPOINT_DB=/data/checkpoints.sqlite
       - DOWNLOADS_DIR=/data/downloads
+      - PLAYWRIGHT_MCP_URL=http://playwright:8931/mcp
+    depends_on:
+      playwright:
+        condition: service_started
     volumes:
       - checkpoints:/data
       # Files the agent downloads land here on your machine.
@@ -22,6 +26,15 @@ services:
       timeout: 5s
       retries: 3
       start_period: 20s
+
+  playwright:
+    # Official Playwright MCP server: headless browser tools for JS-rendered
+    # sites and portals that block plain HTTP fetching.
+    image: mcr.microsoft.com/playwright/mcp:latest
+    # allowed-hosts must include the compose-network hostname the backend uses;
+    # the service is not published to the host machine, so this stays internal.
+    command: ["--headless", "--isolated", "--no-sandbox", "--port", "8931", "--host", "0.0.0.0", "--allowed-hosts", "playwright:8931"]
+    init: true
 
   frontend:
     build: ./frontend

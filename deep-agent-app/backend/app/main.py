@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import logging
-from contextlib import asynccontextmanager
+from contextlib import AsyncExitStack, asynccontextmanager
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -21,8 +21,13 @@ logger = logging.getLogger(__name__)
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     settings = get_settings()
-    async with open_checkpointer(settings.checkpoint_db) as checkpointer:
-        tools = await build_tools(settings)
+    # The stack owns everything that must live as long as the app: the
+    # checkpointer and persistent MCP sessions (e.g. the headless browser).
+    async with AsyncExitStack() as stack:
+        checkpointer = await stack.enter_async_context(
+            open_checkpointer(settings.checkpoint_db)
+        )
+        tools = await build_tools(settings, stack)
         app.state.settings = settings
         app.state.agent_factory = AgentFactory(
             tools=tools, checkpointer=checkpointer, settings=settings
