@@ -27,9 +27,9 @@ import asyncio
 import os
 
 # Imported for its side effects too: loads .env and pins EMBEDDING_DIM before
-# graphiti_core is imported. make_graphiti() wires up Groq + the local
+# graphiti_core is imported. make_graphiti() wires up Claude + the local
 # embedder and reranker, so no search path reaches OpenAI.
-from add_episodes import make_graphiti
+from add_episodes import ANTHROPIC_MODEL, make_graphiti
 
 from graphiti_core.search.search_config_recipes import (
     COMBINED_HYBRID_SEARCH_RRF,
@@ -70,36 +70,36 @@ not use.
 lists, no restating the question."""
 
 
-async def answer_from_facts(query: str, facts: list[str], model: str | None = None) -> str:
-    """Turn retrieved graph facts into a natural-language answer via Groq.
+async def answer_from_facts(
+    query: str, facts: list[str], model: str | None = None
+) -> str:
+    """Turn retrieved graph facts into a natural-language answer via Claude.
 
-    Graphiti's own GroqClient is not reused: it forces
-    response_format={'type': 'json_object'} and json.loads() the reply, so it
-    cannot return prose. This talks to the same Groq account and model.
+    Graphiti's own AnthropicClient is not reused: it forces a tool call whose
+    schema is a JSON object and returns the parsed input, so it cannot return
+    prose. This talks to the same Anthropic account and model.
     """
     if not facts:
         return "Nothing in the graph matches that query, so there is nothing to answer from."
 
-    from groq import AsyncGroq
+    from anthropic import AsyncAnthropic
 
-    client = AsyncGroq(api_key=os.environ["GROQ_API_KEY"])
+    client = AsyncAnthropic(api_key=os.environ["ANTHROPIC_API_KEY"])
     numbered = "\n".join(f"{i}. {fact}" for i, fact in enumerate(facts, start=1))
 
-    response = await client.chat.completions.create(
-        model=model or os.getenv("GROQ_MODEL", "openai/gpt-oss-120b"),
+    response = await client.messages.create(
+        model=model or os.getenv("ANTHROPIC_MODEL", ANTHROPIC_MODEL),
+        system=ANSWER_SYSTEM_PROMPT,
         messages=[
-            {"role": "system", "content": ANSWER_SYSTEM_PROMPT},
             {"role": "user", "content": f"Facts:\n{numbered}\n\nQuestion: {query}"},
         ],
-        temperature=0.2,  # low: this is grounded summarisation, not writing
-        max_tokens=500,
+        max_tokens=2048,
+        output_config={"effort": os.getenv("ANTHROPIC_EFFORT", "low")},
     )
-    text = (response.choices[0].message.content or "").strip()
 
-    # gpt-oss-120b emits full-width citation brackets regardless of what the
-    # prompt asks for, and Streamlit renders them literally. Normalise here
-    # rather than trying to prompt it away.
-    return text.replace("【", "[").replace("】", "]")
+    return "\n".join(
+        block.text for block in response.content if block.type == "text"
+    ).strip()
 
 
 async def find_focal_node(graphiti, name: str, group_ids: list[str] | None = None):
@@ -236,7 +236,9 @@ async def main():
         choices=["facts", *RECIPES],
         help="facts (default) uses graphiti.search(); the rest use search_()",
     )
-    parser.add_argument("--nodes", action="store_true", help="shorthand for --recipe nodes")
+    parser.add_argument(
+        "--nodes", action="store_true", help="shorthand for --recipe nodes"
+    )
     parser.add_argument("-n", "--limit", type=int, default=10)
     args = parser.parse_args()
 

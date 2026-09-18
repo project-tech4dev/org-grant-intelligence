@@ -32,7 +32,7 @@ from pathlib import Path
 
 from add_episodes import make_graphiti
 
-from groq import APIStatusError  # noqa: E402
+from anthropic import APIStatusError  # noqa: E402
 
 from graphiti_core.llm_client.errors import RateLimitError  # noqa: E402
 from graphiti_core.nodes import EpisodeType  # noqa: E402
@@ -206,16 +206,16 @@ class TooLargeForTPM(RuntimeError):
     """One episode exceeded the model's tokens-per-minute ceiling."""
 
 
-class DailyQuotaExhausted(RuntimeError):
-    """The per-day token budget is gone. Nothing helps until it resets."""
+class QuotaExhausted(RuntimeError):
+    """The account is out of credit. Nothing helps until it is topped up."""
 
 
 def _quota_detail(exc: BaseException, depth: int = 6) -> str:
     """Every message on an exception's chain, joined.
 
-    Wrappers routinely drop the provider's text: graphiti raises its own
-    RateLimitError with no arguments, so the sentence naming TPD or TPM is
-    only reachable through __cause__.
+    Wrappers routinely drop the provider's text -- graphiti re-raises its own
+    exception types around the anthropic ones -- so the sentence naming the
+    actual limit may only be reachable through __cause__.
     """
     parts, seen, cur = [], set(), exc
     while cur is not None and len(parts) < depth and id(cur) not in seen:
@@ -226,7 +226,7 @@ def _quota_detail(exc: BaseException, depth: int = 6) -> str:
 
 
 async def add_with_retry(graphiti, retries: int = 7, **kwargs):
-    """add_episode, retrying on Groq's rate limit with increasing backoff.
+    """add_episode, retrying on Anthropic's rate limit with increasing backoff.
 
     Each episode is several LLM calls, so a long document will hit the
     tokens-per-minute ceiling well before the requests-per-minute one.
@@ -236,29 +236,27 @@ async def add_with_retry(graphiti, retries: int = 7, **kwargs):
         try:
             return await graphiti.add_episode(**kwargs)
         except RateLimitError as exc:
-            # A per-minute limit refills in under a minute, so backing off
-            # works. A per-day limit does not refill for hours: backing off
-            # burns 21 minutes per episode and skips it anyway.
-            #
-            # Groq names which limit it hit, but graphiti's GroqClient does
-            # `raise RateLimitError from e` with no arguments, so str(exc) is
-            # always the generic "Rate limit exceeded. Please try again
-            # later." The real text only survives on the exception chain.
-            detail = _quota_detail(exc)
-            if "tokens per day" in detail or "(TPD)" in detail:
-                raise DailyQuotaExhausted(detail) from exc
+            # Anthropic's rate limits are all per-minute, so backing off
+            # always eventually works -- unlike a spent credit balance, which
+            # arrives as a 400 and is handled in the branch below.
             if attempt == retries - 1:
                 raise
             print(f"    rate limited, waiting {delay}s...", flush=True)
             await asyncio.sleep(delay)
             delay *= 2
         except APIStatusError as exc:
-            # 413: this single request is bigger than the whole per-minute
-            # budget. Retrying sends the identical payload and fails the same
-            # way, so surface it as a sizing problem instead.
-            if exc.status_code != 413:
-                raise
-            raise TooLargeForTPM(str(exc)) from exc
+            # 413 request_too_large: this single request is over the API's
+            # per-request ceiling. Retrying sends the identical payload and
+            # fails the same way, so surface it as a sizing problem instead.
+            if exc.status_code == 413:
+                raise TooLargeForTPM(str(exc)) from exc
+            # A spent credit balance is a 400, and it does not clear on its
+            # own. graphiti re-raises the anthropic error unchanged, but check
+            # the whole chain in case a wrapper swallows the message.
+            detail = _quota_detail(exc)
+            if "credit balance" in detail.lower():
+                raise QuotaExhausted(detail) from exc
+            raise
 
 
 async def main() -> int:
@@ -474,15 +472,15 @@ async def main() -> int:
                 print("  SKIPPED: too large for the per-minute token limit")
                 failed.append(name)
                 continue
-            except DailyQuotaExhausted as exc:
+            except QuotaExhausted as exc:
                 # Every remaining episode would fail identically, so stop now
                 # instead of spending ~21 minutes of backoff on each.
-                print("\n  DAILY TOKEN QUOTA EXHAUSTED -- stopping.")
+                print("\n  OUT OF API CREDIT -- stopping.")
                 print(f"  {exc}"[:300])
                 remaining = len(episodes) - i + 1
                 print(
                     f"\n  {i - 1} episode(s) ingested this run, {remaining} "
-                    "left. Re-run with --skip-existing once the quota resets."
+                    "left. Re-run with --skip-existing once it is topped up."
                 )
                 break
             except RateLimitError:

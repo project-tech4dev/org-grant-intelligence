@@ -20,13 +20,17 @@ load_dotenv(Path(__file__).resolve().parent.parent / ".env")
 # 384 = sentence-transformers/all-MiniLM-L6-v2
 os.environ.setdefault("EMBEDDING_DIM", "384")
 
+from anthropic import AsyncAnthropic  # noqa: E402
+
 from graphiti_core import Graphiti  # noqa: E402
 from graphiti_core.driver.falkordb_driver import FalkorDriver  # noqa: E402
+from graphiti_core.llm_client.anthropic_client import AnthropicClient  # noqa: E402
 from graphiti_core.llm_client.config import LLMConfig  # noqa: E402
-from graphiti_core.llm_client.groq_client import GroqClient  # noqa: E402
 
 FALKOR_HOST = os.getenv("FALKORDB_HOST", "localhost")
 FALKOR_PORT = int(os.getenv("FALKORDB_PORT", "6379"))
+
+ANTHROPIC_MODEL = "claude-opus-5"
 
 
 async def main():
@@ -37,12 +41,16 @@ async def main():
             port=FALKOR_PORT,
             database=os.getenv("FALKORDB_DATABASE", "graphiti"),
         ),
-        # Without this, Graphiti defaults to OpenAI and fails on a missing OPENAI_API_KEY
-        llm_client=GroqClient(
-            config=LLMConfig(
-                api_key=os.environ["GROQ_API_KEY"],
-                model=os.getenv("GROQ_MODEL", "openai/gpt-oss-120b"),
-            )
+        # Without this, Graphiti defaults to OpenAI and fails on a missing OPENAI_API_KEY.
+        # A plain AsyncAnthropic is enough here because this file never sends a
+        # prompt; graphiti's AnthropicClient passes a `temperature` the
+        # anthropic 1.x SDK rejects, so anything that does call the model goes
+        # through make_graphiti() in add_episodes.py instead.
+        llm_client=AnthropicClient(
+            config=LLMConfig(model=os.getenv("ANTHROPIC_MODEL", ANTHROPIC_MODEL)),
+            client=AsyncAnthropic(
+                api_key=os.environ["ANTHROPIC_API_KEY"], max_retries=1
+            ),
         ),
     )
 

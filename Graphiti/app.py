@@ -166,7 +166,7 @@ with st.sidebar:
         "Answer in natural language",
         value=True,
         help=(
-            "Sends the retrieved facts to Groq and shows a written answer, "
+            "Sends the retrieved facts to Claude and shows a written answer, "
             "with the raw facts underneath. Turn off to see only the facts."
         ),
     )

@@ -3,9 +3,14 @@
 A temporal knowledge graph over FalkorDB, driven by [Graphiti](https://github.com/getzep/graphiti).
 Ported from [apekshagangurde/Langchain/graphiti](https://github.com/apekshagangurde/Langchain/tree/main/graphiti).
 
-Groq does the LLM work (entity/fact extraction, and the written answer).
+Claude does the LLM work (entity/fact extraction, and the written answer).
 Embeddings and reranking run locally via `sentence-transformers`, so nothing
 reaches OpenAI.
+
+Note: graphiti-core's `AnthropicClient` sends a `temperature` that the
+`anthropic` 1.x SDK no longer accepts, so `make_graphiti()` in
+`add_episodes.py` wraps the client to strip it. Everything that calls the
+model goes through there.
 
 ## Files
 
@@ -21,7 +26,7 @@ reaches OpenAI.
 
 ```bash
 pip install -r requirements.txt
-cp .env.example .env    # then fill in GROQ_API_KEY
+cp .env.example .env    # then fill in ANTHROPIC_API_KEY
 ```
 
 Nothing here runs against a database until you start one.

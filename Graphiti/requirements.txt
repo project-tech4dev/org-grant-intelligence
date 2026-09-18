@@ -1,5 +1,5 @@
 graphiti-core[falkordb]
-groq
+anthropic
 sentence-transformers
 streamlit
 python-dotenv

@@ -27,21 +27,25 @@ load_dotenv(Path(__file__).resolve().parent.parent / ".env")
 # 384 = sentence-transformers/all-MiniLM-L6-v2
 os.environ.setdefault("EMBEDDING_DIM", "384")
 
+from anthropic import AsyncAnthropic  # noqa: E402
+
 from graphiti_core import Graphiti  # noqa: E402
 from graphiti_core.cross_encoder.client import CrossEncoderClient  # noqa: E402
 from graphiti_core.driver.falkordb_driver import FalkorDriver  # noqa: E402
 from graphiti_core.embedder.client import EmbedderClient, EmbedderConfig  # noqa: E402
+from graphiti_core.llm_client.anthropic_client import AnthropicClient  # noqa: E402
 from graphiti_core.llm_client.config import LLMConfig  # noqa: E402
-from graphiti_core.llm_client.groq_client import GroqClient  # noqa: E402
 from graphiti_core.nodes import EpisodeType  # noqa: E402
 
 EMBEDDING_MODEL = "sentence-transformers/all-MiniLM-L6-v2"
 RERANKER_MODEL = "cross-encoder/ms-marco-MiniLM-L-6-v2"
 
+ANTHROPIC_MODEL = "claude-opus-5"
+
 
 class LocalEmbedder(EmbedderClient):
-    """Graphiti ships only API-backed embedders and Groq has no embeddings
-    endpoint, so embeddings run locally via sentence-transformers."""
+    """Graphiti ships only API-backed embedders and Anthropic has no
+    embeddings endpoint, so embeddings run locally via sentence-transformers."""
 
     def __init__(self):
         from sentence_transformers import SentenceTransformer
@@ -89,6 +93,43 @@ class LocalReranker(CrossEncoderClient):
         )
 
 
+class _MessagesCompat:
+    """Fixes up every request graphiti sends to the Anthropic API.
+
+    Two things need patching in graphiti-core 0.30.2's AnthropicClient
+    against the anthropic 1.x SDK:
+
+    1. It passes `temperature=` on every call (anthropic_client.py). anthropic
+       1.x removed that parameter -- Claude 4.6 and later reject sampling
+       parameters -- so the call raises TypeError before it reaches the API.
+       Dropped here. This is not Opus-specific: without it, AnthropicClient
+       fails on every model.
+    2. It cannot set output_config, so effort is always the API default
+       (high). ANTHROPIC_EFFORT (low|medium|high|xhigh|max) sets it.
+       Extraction is several calls per episode, so lowering it is the
+       cheapest way to cut the bill on a large ingest.
+    """
+
+    def __init__(self, messages):
+        self._messages = messages
+        effort = os.getenv("ANTHROPIC_EFFORT")
+        self._output_config = {"effort": effort} if effort else None
+
+    async def create(self, **kwargs):
+        kwargs.pop("temperature", None)
+        if self._output_config:
+            kwargs.setdefault("output_config", self._output_config)
+        return await self._messages.create(**kwargs)
+
+
+class _AnthropicCompat:
+    """Stands in for AsyncAnthropic: AnthropicClient only ever reaches for
+    .messages.create()."""
+
+    def __init__(self, client: AsyncAnthropic):
+        self.messages = _MessagesCompat(client.messages)
+
+
 def make_graphiti(database: str | None = None) -> Graphiti:
     """Build the Graphiti client. `database` overrides FALKORDB_DATABASE.
 
@@ -96,17 +137,21 @@ def make_graphiti(database: str | None = None) -> Graphiti:
     one means pointing the driver at that graph -- otherwise
     build_indices_and_constraints() builds its indices on the wrong graph.
     """
+    api_key = os.environ["ANTHROPIC_API_KEY"]
     return Graphiti(
         graph_driver=FalkorDriver(
             host=os.getenv("FALKORDB_HOST", "localhost"),
             port=int(os.getenv("FALKORDB_PORT", "6379")),
             database=database or os.getenv("FALKORDB_DATABASE", "graphiti"),
         ),
-        llm_client=GroqClient(
-            config=LLMConfig(
-                api_key=os.environ["GROQ_API_KEY"],
-                model=os.getenv("GROQ_MODEL", "openai/gpt-oss-120b"),
-            )
+        # Without an llm_client, Graphiti defaults to OpenAI and fails on a
+        # missing OPENAI_API_KEY. max_tokens comes from LLMConfig's default
+        # (16384), shared between thinking and the response.
+        llm_client=AnthropicClient(
+            config=LLMConfig(model=os.getenv("ANTHROPIC_MODEL", ANTHROPIC_MODEL)),
+            # max_retries=1 because graphiti retries on top of this: three
+            # attempts inside AnthropicClient.generate_response.
+            client=_AnthropicCompat(AsyncAnthropic(api_key=api_key, max_retries=1)),
         ),
         embedder=LocalEmbedder(),
         cross_encoder=LocalReranker(),
