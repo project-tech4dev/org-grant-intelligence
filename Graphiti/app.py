@@ -13,13 +13,28 @@ Two tabs:
 import asyncio
 import os
 import threading
+from datetime import datetime, timezone
+from pathlib import Path
 
 import streamlit as st
 
 # Imported for side effects too: loads .env and pins EMBEDDING_DIM before
 # graphiti_core is imported.
 from add_episodes import add_episode, make_graphiti
+from ingest_markdown import (
+    EXTRACTION_INSTRUCTIONS,
+    PROMPT_OVERHEAD_TOKENS,
+    QuotaExhausted,
+    TooLargeForTPM,
+    add_with_retry,
+    already_ingested,
+    build_episodes,
+)
 from search import RECIPES, answer_from_facts, find_focal_node
+
+from graphiti_core.llm_client.errors import RateLimitError  # noqa: E402
+from graphiti_core.nodes import EpisodeType  # noqa: E402
+from graphiti_core.utils.content_chunking import estimate_tokens  # noqa: E402
 
 st.set_page_config(page_title="Graphiti", page_icon="🔎")
 
@@ -113,6 +128,27 @@ def list_graphs() -> list[tuple[str, int]]:
         return [(DEFAULT_GRAPH, 0)]
     # Biggest first, so the graph you just filled is at the top.
     return sorted(graphs, key=lambda pair: (-pair[1], pair[0]))
+
+
+# Everything under the repo root is offered in the file picker, so a document
+# does not have to be copied into Graphiti/ to be ingested.
+REPO_ROOT = Path(__file__).resolve().parent.parent
+SKIP_DIRS = {".git", ".venv", "node_modules", "__pycache__", "falkordb_data", ".claude"}
+
+
+@st.cache_data(ttl=60)
+def find_markdown_files() -> list[str]:
+    """Repo markdown files, as paths relative to the repo root.
+
+    Cached because rglob over the whole repo on every widget interaction is
+    wasteful -- Streamlit re-runs this script on each one.
+    """
+    found = []
+    for path in REPO_ROOT.rglob("*.md"):
+        if SKIP_DIRS & set(path.parts):
+            continue
+        found.append(str(path.relative_to(REPO_ROOT)))
+    return sorted(found)
 
 
 st.title("🔎 Graphiti")
@@ -242,8 +278,9 @@ def render_search():
 
         # What the LLM is allowed to use. Node summaries count as context in
         # nodes mode, where the search returns no edges at all.
-        # citation[n] is the number the answer will cite this item as, so the
-        # numbering shown below matches the [1]/[2] markers in the prose.
+        # The answer no longer prints [1]/[2] markers -- the facts are listed
+        # under it instead -- but the numbering is kept so a reader can still
+        # match a claim in the prose to the item it came from.
         context = [edge.fact for edge in edges]
         citation: dict[str, int] = {}
         if results is not None:
@@ -272,7 +309,7 @@ def render_search():
             st.divider()
 
         if edges:
-            # Numbered to match the [1]/[2] citations in the answer above.
+            # Numbered so a claim in the answer above can be traced back.
             st.subheader(f"Facts ({len(edges)})")
             for i, edge in enumerate(edges, start=1):
                 st.markdown(f"{i}. {edge.fact}")
@@ -293,12 +330,243 @@ def render_search():
 with search_tab:
     render_search()
 
+def render_ingest():
+    """Ingest a markdown file, one episode per section.
+
+    Same pipeline as ingest_markdown.py -- its build_episodes() and
+    add_with_retry() are imported rather than reimplemented, so the split and
+    the retry behaviour cannot drift from the CLI.
+    """
+    files = find_markdown_files()
+    if not files:
+        st.warning("No markdown files found under the repo root.")
+        return
+
+    choice = st.selectbox(
+        "Markdown file",
+        files,
+        help="Any .md file in the repo. Nothing is read until you preview or ingest.",
+    )
+    path = REPO_ROOT / choice
+
+    col_a, col_b = st.columns(2)
+    with col_a:
+        level = st.number_input(
+            "Split on heading level",
+            min_value=1,
+            max_value=4,
+            value=2,
+            help=(
+                "One episode per heading at this level. A section is the unit "
+                "that holds a complete thought: the whole file as one episode "
+                "makes the LLM extract in a single pass and it returns a "
+                "shallow set."
+            ),
+        )
+        max_ep_tokens = st.number_input(
+            "Max tokens per episode",
+            min_value=200,
+            max_value=8000,
+            value=1200,
+            step=100,
+            help=(
+                "Sections bigger than this are split further. Do not lower it "
+                f"to 'be safe': the ~{PROMPT_OVERHEAD_TOKENS} tokens of prompt "
+                "overhead are charged per call, so smaller episodes mean more "
+                "calls and a bigger total bill."
+            ),
+        )
+    with col_b:
+        ep_limit = st.number_input(
+            "Ingest at most N episodes",
+            min_value=1,
+            max_value=200,
+            value=1,
+            help=(
+                "Defaults to 1 so you can inspect what one section extracts "
+                "before paying for the whole document. Counted after the "
+                "resume filter, so it means N *more* episodes."
+            ),
+        )
+        skip_existing = st.toggle(
+            "Skip episodes already in the graph",
+            value=True,
+            help="Lets an interrupted run resume without paying for it twice.",
+        )
+        strip_code = st.toggle("Strip fenced code blocks", value=True)
+        tpm = st.number_input(
+            "Tokens-per-minute limit",
+            min_value=1000,
+            max_value=200000,
+            value=8000,
+            step=1000,
+            help=(
+                "Only used to flag oversized sections in the preview; it sends "
+                "nothing. Defaults to 8000 to match ingest_markdown.py's --tpm, "
+                "so the UI and the CLI agree on what counts as oversized. "
+                "Anthropic's usage tier 1 is well above this, so raise it to "
+                "your real limit to stop the preview over-warning."
+            ),
+        )
+
+    use_instructions = st.toggle(
+        "Use the built-in extraction instructions",
+        value=True,
+        help=(
+            "Tells the extractor to capture dates, numbers, amounts, counts "
+            "and generic demographic categories as facts. Without it, "
+            "attribute data such as `| Established | 2012 |` is dropped. "
+            f"Costs ~{estimate_tokens(EXTRACTION_INSTRUCTIONS)} tokens per call."
+        ),
+    )
+
+    preview, ingest = st.columns(2)
+    do_preview = preview.button("Preview the split (free)", width="stretch")
+    do_ingest = ingest.button(
+        f"Ingest {ep_limit} episode(s)", type="primary", width="stretch"
+    )
+
+    if not (do_preview or do_ingest):
+        st.caption(
+            "**Preview** reads the file and shows how it splits — no LLM calls, "
+            "no writes, no cost. **Ingest** runs the real pipeline."
+        )
+        return
+
+    text = path.read_text(encoding="utf-8")
+    plan = build_episodes(
+        text,
+        int(max_ep_tokens),
+        strip_code=strip_code,
+        level=int(level),
+        fallback=path.stem,
+    )
+
+    rows = []
+    risky = 0
+    for i, (ep_name, body) in enumerate(plan, start=1):
+        body_tokens = estimate_tokens(body)
+        request = body_tokens + PROMPT_OVERHEAD_TOKENS
+        too_big = request > int(tpm)
+        risky += too_big
+        rows.append(
+            {
+                "#": i,
+                "section": ep_name,
+                "body tokens": body_tokens,
+                "est. request": request,
+                "oversized": "⚠️" if too_big else "",
+            }
+        )
+
+    st.caption(
+        f"`{choice}` — ~{estimate_tokens(text)} tokens → **{len(plan)} episode(s)**, "
+        f"split on H{int(level)}"
+    )
+    st.dataframe(rows, hide_index=True, width="stretch")
+    if risky:
+        st.warning(
+            f"{risky} episode(s) build a request bigger than the {int(tpm)} "
+            "tokens-per-minute limit set beside the file picker. Lower the max "
+            "tokens per episode, or raise the limit if 8000 is not yours."
+        )
+
+    if do_preview:
+        st.info("Preview only — nothing was sent to the LLM or written.")
+        return
+
+    # ---- the real thing -------------------------------------------------
+    writer = get_writer(group)
+    run(writer.build_indices_and_constraints())
+
+    todo = plan
+    if skip_existing:
+        existing = run(already_ingested(writer))
+        before = len(todo)
+        todo = [(n, b) for n, b in todo if n not in existing]
+        if before != len(todo):
+            st.info(f"{before - len(todo)} episode(s) already in the graph, skipped.")
+
+    todo = todo[: int(ep_limit)]
+    if not todo:
+        st.success("Nothing left to ingest — every episode is already in the graph.")
+        return
+
+    # One timestamp for the whole document: graphiti uses reference_time for
+    # temporal edge invalidation, so a per-episode now() would make it treat
+    # later sections as superseding earlier ones.
+    reference_time = datetime.fromtimestamp(path.stat().st_mtime, tz=timezone.utc)
+    instructions = EXTRACTION_INSTRUCTIONS if use_instructions else None
+
+    progress = st.progress(0.0, text="starting...")
+    nodes = edges = 0
+    failed = []
+
+    for i, (ep_name, body) in enumerate(todo, start=1):
+        progress.progress((i - 1) / len(todo), text=f"[{i}/{len(todo)}] {ep_name}")
+        try:
+            result = run(
+                add_with_retry(
+                    writer,
+                    name=ep_name,
+                    episode_body=body,
+                    source=EpisodeType.text,
+                    source_description=f"{path.name} (markdown section)",
+                    reference_time=reference_time,
+                    group_id=group_ids[0] if group_ids else None,
+                    custom_extraction_instructions=instructions,
+                    previous_episode_uuids=None,
+                )
+            )
+        except TooLargeForTPM:
+            st.warning(f"**{ep_name}** — too large for the per-minute token limit.")
+            failed.append(ep_name)
+            continue
+        except QuotaExhausted as exc:
+            st.error(f"Out of API credit — stopping. {exc}"[:300])
+            break
+        except RateLimitError:
+            st.warning(f"**{ep_name}** — still rate limited after all retries.")
+            failed.append(ep_name)
+            continue
+
+        nodes += len(result.nodes)
+        edges += len(result.edges)
+        with st.expander(
+            f"[{i}/{len(todo)}] {ep_name} — {len(result.nodes)} entities, "
+            f"{len(result.edges)} facts"
+        ):
+            st.write("**Entities:** " + ", ".join(n.name for n in result.nodes))
+            for edge in result.edges:
+                st.markdown(f"- {edge.fact}")
+
+    progress.progress(1.0, text="done")
+    list_graphs.clear()  # the sidebar counts are cached for 30s
+
+    st.success(
+        f"Ingested {len(todo) - len(failed)} episode(s) into **{group}** — "
+        f"{nodes} entities, {edges} facts extracted."
+    )
+    if len(plan) > len(todo):
+        st.caption(
+            f"{len(plan) - len(todo)} section(s) of this file are still "
+            "un-ingested. Raise the limit and run again — "
+            "'skip already in the graph' means you will not pay twice."
+        )
+
+
 with add_tab:
     st.caption(
-        f"Adds one episode to the **{group}** graph. Graphiti runs the LLM over "
-        "the text to extract entities and facts, then writes them — this is the "
-        "only thing in the app that writes to the database."
+        f"Writes to the **{group}** graph. Graphiti runs the LLM over the text "
+        "to extract entities and facts — this tab is the only thing in the app "
+        "that writes to the database."
     )
+    paste_sub, file_sub = st.tabs(["Paste text", "Markdown file"])
+
+    with file_sub:
+        render_ingest()
+
+with paste_sub:
 
     with st.form("add_episode"):
         text = st.text_area(

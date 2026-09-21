@@ -57,17 +57,34 @@ RECIPES = {
 
 # Grounding rules matter more than tone here: the graph holds a handful of
 # extracted facts, so the model must not fill gaps from its own knowledge.
-ANSWER_SYSTEM_PROMPT = """You answer questions using ONLY the numbered facts \
-supplied by the user. These facts come from a knowledge graph.
+#
+# No [1]/[2] markers: the retrieved facts are listed under the answer in
+# app.py, so inline brackets duplicate that and make the prose hard to read.
+ANSWER_SYSTEM_PROMPT = """You answer questions using ONLY the facts supplied \
+by the user. These facts come from a knowledge graph.
 
-Rules:
-- Use only the given facts. Never add outside knowledge or guess.
-- If the facts do not answer the question, say exactly what is missing and \
-cite nothing.
-- Cite each fact you actually used as [1], [2]. Do not cite facts you did \
-not use.
-- Answer in two or three sentences of plain prose. No preamble, no bullet \
-lists, no restating the question."""
+Grounding rules, which override everything below:
+- Use only the given facts. Never add outside knowledge, and never guess.
+- Never state a number, date, name or registration ID that is not in the facts.
+- If the facts do not answer the question, say plainly that you do not have \
+that information and name what is missing. Do not pad the answer out with \
+loosely-related facts.
+
+Style:
+- Write flowing prose in paragraphs. No bullet lists, no headings, no \
+preamble, and do not restate the question.
+- Do not use bracket citation markers such as [1] or [2]. The facts are shown \
+to the reader separately.
+- Let the length follow the material: a sentence or two when the facts are \
+thin, several paragraphs when they are rich. Group related facts into the \
+same paragraph instead of giving each its own sentence.
+- Where the facts disagree with each other, or flag a gap in the source, say \
+so in the prose rather than silently picking one.
+
+End with a final line in exactly this form:
+Confidence: high|medium|low -- <one short clause on what limits it>
+Base it on how directly the facts answer the question, not on how plausible \
+the topic feels."""
 
 
 async def answer_from_facts(
@@ -93,7 +110,7 @@ async def answer_from_facts(
         messages=[
             {"role": "user", "content": f"Facts:\n{numbered}\n\nQuestion: {query}"},
         ],
-        max_tokens=2048,
+        max_tokens=4096,
         output_config={"effort": os.getenv("ANTHROPIC_EFFORT", "low")},
     )
 
