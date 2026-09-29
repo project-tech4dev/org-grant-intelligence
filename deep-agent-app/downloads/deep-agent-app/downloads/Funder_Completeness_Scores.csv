@@ -1,0 +1,73 @@
+funder,table_no,table,area,weighted_score_pct,core_fields_pct,core_fields_missing_or_invalid,points_got,points_possible
+Axis Bank Foundation,1,funders,Identity,96,95,profile,18.25,19.0
+Axis Bank Foundation,2,funder_identifiers,Identity,97,100,,8.0,8.25
+Axis Bank Foundation,3,credential_events,Identity,80,92,event_date,10.06,12.5
+Axis Bank Foundation,4,funder_tags,Focus & places,98,100,,3.69,3.75
+Axis Bank Foundation,5,funder_locations,Focus & places,51,75,role,3.69,7.25
+Axis Bank Foundation,6,funder_csr_years,Money,46,44,"spent_on_projects, admin_overheads, total_spent",8.0,17.25
+Axis Bank Foundation,7,funder_csr_spend,Money,50,50,"project_name, implementing_agency",9.69,19.25
+Axis Bank Foundation,8,programs,Programmes & reach,75,94,description,13.5,18.0
+Axis Bank Foundation,9,funder_footprints,Programmes & reach,83,88,fiscal_year,6.88,8.25
+Axis Bank Foundation,10,funder_partners,People & partners,54,67,partner_kind,7.19,13.25
+Axis Bank Foundation,11,grants,Money,52,58,"amount, status",8.0,15.25
+Axis Bank Foundation,12,rfps,How to apply,n/a,n/a,not applicable,,
+Axis Bank Foundation,13,proposal_templates,How to apply,n/a,n/a,not applicable,,
+Axis Bank Foundation,14,contacts,People & partners,80,100,,11.0,13.75
+Axis Bank Foundation,15,metrics,Programmes & reach,72,80,"value, unit, period, stage",14.69,20.5
+Axis Bank Foundation,16,documents,Evidence,95,100,,10.69,11.25
+Axis Bank Foundation,17,news_mentions,Evidence,68,69,"url, seendate",12.0,17.75
+Axis Bank Foundation,18,reference_figures,Evidence,81,94,value,13.19,16.25
+Axis Bank Foundation,19,program_locations,Programmes & reach,64,100,,4.62,7.25
+Axis Bank Foundation,20,program_tags,Programmes & reach,100,100,,3.75,3.75
+Axis Bank Foundation,21,grant_locations,Programmes & reach,95,100,,4.75,5.0
+Axis Bank Foundation,22,rfp_locations,How to apply,n/a,n/a,not applicable,,
+Axis Bank Foundation,23,rfp_tags,How to apply,n/a,n/a,not applicable,,
+Axis Bank Foundation,24,template_items,How to apply,n/a,n/a,not applicable,,
+SBI Foundation,1,funders,Identity,81,80,profile,15.44,19.0
+SBI Foundation,2,funder_identifiers,Identity,93,100,,7.69,8.25
+SBI Foundation,3,credential_events,Identity,76,83,"event, event_date",9.44,12.5
+SBI Foundation,4,funder_tags,Focus & places,100,100,,3.75,3.75
+SBI Foundation,5,funder_locations,Focus & places,68,75,role,4.94,7.25
+SBI Foundation,6,funder_csr_years,Money,0,0,"fiscal_year, spent_on_projects, admin_overheads, total_spent",0.0,17.25
+SBI Foundation,7,funder_csr_spend,Money,26,25,"project_name, implementing_agency, amount",5.0,19.25
+SBI Foundation,8,programs,Programmes & reach,76,100,,13.75,18.0
+SBI Foundation,9,funder_footprints,Programmes & reach,84,88,name_as_printed,6.94,8.25
+SBI Foundation,10,funder_partners,People & partners,83,92,partner_kind,10.94,13.25
+SBI Foundation,11,grants,Money,61,67,amount,9.25,15.25
+SBI Foundation,12,rfps,How to apply,46,50,"url, status, deadline, eligibility",9.19,20.0
+SBI Foundation,13,proposal_templates,How to apply,0,0,"name, kind",0.0,9.25
+SBI Foundation,14,contacts,People & partners,78,92,kind,10.69,13.75
+SBI Foundation,15,metrics,Programmes & reach,77,85,"value, unit, stage",15.69,20.5
+SBI Foundation,16,documents,Evidence,88,92,source_url,9.94,11.25
+SBI Foundation,17,news_mentions,Evidence,71,69,"url, seendate",12.69,17.75
+SBI Foundation,18,reference_figures,Evidence,88,88,"kind, value",14.25,16.25
+SBI Foundation,19,program_locations,Programmes & reach,0,0,role,0.0,7.25
+SBI Foundation,20,program_tags,Programmes & reach,98,100,,3.69,3.75
+SBI Foundation,21,grant_locations,Programmes & reach,90,100,,4.5,5.0
+SBI Foundation,22,rfp_locations,How to apply,68,100,,4.94,7.25
+SBI Foundation,23,rfp_tags,How to apply,100,100,,3.75,3.75
+SBI Foundation,24,template_items,How to apply,0,0,"ord, item_kind, heading",0.0,16
+Infosys Foundation,1,funders,Identity,91,90,"website, profile",17.25,19.0
+Infosys Foundation,2,funder_identifiers,Identity,88,88,id_value,7.25,8.25
+Infosys Foundation,3,credential_events,Identity,68,83,"event, event_date",8.44,12.5
+Infosys Foundation,4,funder_tags,Focus & places,98,100,,3.69,3.75
+Infosys Foundation,5,funder_locations,Focus & places,53,75,role,3.88,7.25
+Infosys Foundation,6,funder_csr_years,Money,0,0,"fiscal_year, spent_on_projects, admin_overheads, total_spent",0.0,17.25
+Infosys Foundation,7,funder_csr_spend,Money,0,0,"fiscal_year, project_name, implementing_agency, amount",0.0,19.25
+Infosys Foundation,8,programs,Programmes & reach,73,94,status,13.19,18.0
+Infosys Foundation,9,funder_footprints,Programmes & reach,56,64,"fiscal_year, name_as_printed",4.62,8.25
+Infosys Foundation,10,funder_partners,People & partners,49,58,"fiscal_year, partner_kind",6.5,13.25
+Infosys Foundation,11,grants,Money,12,15,"title, amount, status",1.82,15.25
+Infosys Foundation,12,rfps,How to apply,72,80,url,14.44,20.0
+Infosys Foundation,13,proposal_templates,How to apply,0,0,"name, kind",0.0,9.25
+Infosys Foundation,14,contacts,People & partners,50,64,"name, role, kind",6.88,13.75
+Infosys Foundation,15,metrics,Programmes & reach,74,85,"value, period, stage",15.12,20.5
+Infosys Foundation,16,documents,Evidence,35,38,"title, doc_type, source_url",3.92,11.25
+Infosys Foundation,17,news_mentions,Evidence,86,94,seendate,15.25,17.75
+Infosys Foundation,18,reference_figures,Evidence,71,69,"kind, value",11.5,16.25
+Infosys Foundation,19,program_locations,Programmes & reach,0,0,role,0.0,7.25
+Infosys Foundation,20,program_tags,Programmes & reach,93,100,,3.5,3.75
+Infosys Foundation,21,grant_locations,Programmes & reach,15,0,note,0.75,5.0
+Infosys Foundation,22,rfp_locations,How to apply,48,75,role,3.5,7.25
+Infosys Foundation,23,rfp_tags,How to apply,100,100,,3.75,3.75
+Infosys Foundation,24,template_items,How to apply,0,0,"ord, item_kind, heading",0.0,16
