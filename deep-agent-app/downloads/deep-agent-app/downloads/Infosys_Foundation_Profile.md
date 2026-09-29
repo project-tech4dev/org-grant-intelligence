@@ -1,6 +1,22 @@
 # Infosys Foundation — Registry Row
 
-*Compiled using the same 24-table schema applied to Axis Bank Foundation and SBI Foundation. Sources: infosys.org / infosys.com (official, but blocks automated crawlers with HTTP 403 — retrieved via cached search-engine snippets, per the caveat repeated throughout), Infosys Limited's statutory Annual Reports (Annexure 6 CSR disclosures), Infosys Foundation's own narrative Annual Reports (FY2023-24, FY2024-25, FY2025-26 — all three downloaded and read in a prior research pass), and give.do. Builds on and restructures the pre-existing `Infosys_Foundation_Full_Report.md` (kept as-is, not deleted) into this schema-matched format, plus new findings from this pass (marked "NEW").*
+*Compiled using the same 24-table schema applied to Axis Bank Foundation and SBI Foundation. Sources: infosys.org / infosys.com (official, but blocks automated crawlers with HTTP 403 — retrieved via cached search-engine snippets, per the caveat repeated throughout), Infosys Foundation's own narrative Annual Reports (FY2023-24, FY2024-25, FY2025-26 — all three downloaded and read in a prior research pass), and give.do. Builds on and restructures the pre-existing `Infosys_Foundation_Full_Report.md` (kept as-is, not deleted) into this schema-matched format.*
+
+---
+
+## Changelog — scope correction (this pass)
+
+Following the same strict separation rule already applied to Axis Bank Foundation (Trust) vs. Axis Bank Limited (parent company), this pass **removes Infosys Limited's own parent-company data that does not belong in Infosys Foundation's profile**, and flags what remains ambiguous rather than silently keeping it.
+
+**Removed:**
+- **Table 6 (`funder_csr_years`)** — the entire table of Infosys Limited's own statutory figures (average net profit, 2%-prescribed CSR, admin overheads, unspent-transferred amounts for FY2020-21 through FY2025-26). These are **Infosys Limited's** Section-135 obligation figures, not Infosys Foundation's — the Foundation itself is not Section-135-bound and does not publish its own separate audited financial statement (unlike Axis Bank Foundation, which does publish its own "Financial Highlights," or SBI Foundation, which as a Section 8 *company* must file its own audited accounts). Infosys Foundation's own narrative Annual Reports explicitly state that "*financial details of Infosys Foundation's activities... are given in the Infosys Integrated Annual Report*" — i.e., there is no Foundation-specific breakdown to report here at all, only a blanket statement that the parent's consolidated filing covers it. This entire table has been deleted rather than mislabeled as the Foundation's own filing.
+- **Table 14 (`contacts`)** — removed **Govind Iyer, Chitra Nayak, and Michael Gibbs** (Infosys *Limited's* CSR Committee members). This is the parent company's statutory board sub-committee, not a Trustee body of Infosys Foundation — exactly analogous to the Axis Bank Limited CSR Committee being removed from the Axis Bank Foundation profile.
+- **Table 4 (`funder_tags`)** — the cause-wise ₹ breakdown sourced from give.do's ***Infosys Limited*** profile (not the Infosys Foundation give.do profile) has been removed as a `funder_tags` evidence source, since it describes the parent's overall CSR spend, not confirmed Foundation-routed spend. The tag list itself (Learning/Livelihoods/Sport, Healthcare, Environmental Sustainability, Women Empowerment, + 5 secondary areas) is kept, since that comes from Infosys **Foundation's own** stated focus-area structure — only the give.do Infosys-*Limited* ₹-amount evidence used to corroborate/rank them has been stripped out.
+- **Table 7 (`funder_csr_spend`), Part (A)** — the FY2022-23 cause-wise category totals (Education ₹120.30cr, Environmental Sustainability ₹106.42cr, etc.) have been removed entirely. This came from give.do's **Infosys Limited** profile page and represents the parent's total CSR spend across *all* implementation channels (direct, Infosys Foundation, and other implementing agencies combined) — it cannot be attributed specifically to Infosys Foundation's own activity, and keeping it in the Foundation's spend table would misrepresent parent-wide spend as the Foundation's own.
+- **Table 7 (`funder_csr_spend`), Part (B)** — re-scrutinised below; several rows have been **removed or downgraded** because the underlying Infosys Ltd. Annexure 6 source does not actually confirm "Infosys Foundation" as the specific implementing agency for those particular FY2024-25/FY2025-26 projects (this was an unverified assumption in the previous draft — see the corrected table).
+- **Table 11 (`grants`)** — candidates drawn from the now-removed/downgraded Table 7(B) rows have been re-labelled accordingly.
+
+**Kept, with clearer attribution:** Infosys Limited's CIN (`parent_id` only, Table 1); the CSR-1 "NA" finding (Table 2/3) — this is specifically a statement *about Infosys Foundation* printed in Infosys Limited's filing, so it correctly belongs in the Foundation's own identifiers, not removed; give.do's Infosys-*Foundation*-specific profile page (distinct from the Infosys-*Limited* profile) remains a valid Foundation source throughout.
 
 ---
 
@@ -13,7 +29,7 @@
 | 3 | **name** | **Infosys Foundation** | Official name, consistently used across infosys.org, infosys.com, and its own Annual Reports |
 | 4 | **funder_type** | `corporate_csr` | CSR/philanthropic implementing vehicle for Infosys Limited (and, per give.do, also for sibling subsidiary Infosys BPM Limited) |
 | 5 | **section_135_bound** | **No** | The Foundation itself is a registered charitable **trust** (established 1996), not a company — the Section 135 obligation binds **Infosys Limited** (the listed parent), which channels part of its mandated CSR spend through the Foundation. Matches the same pattern already established for Axis Bank Foundation and SBI Foundation in this registry. |
-| 6 | **website** | **https://www.infosys.org/infosys-foundation.html** (India); separate arm at **https://www.infosys.org/infosys-foundation-usa.html** (USA) | |
+| 6 | **website** | **https://www.infosys.org/infosys-foundation.html** | This row is Infosys Foundation (India) only. The USA arm (**infosys.org/infosys-foundation-usa.html**) is a separate operation with its own team/budget and has been removed from this profile — flagged for a possible separate `infosys-foundation-usa` funder row if this registry wants to track it. |
 | 7 | **profile** (JSON) | *see breakdown below* | |
 | 8 | **source_url** | https://www.infosys.org/infosys-foundation/about.html | Primary page for founding/mission/leadership facts |
 | 9 | **source_name** | "Infosys Foundation — About Us / Mission & Journey page" | |
@@ -34,24 +50,13 @@
 > Also runs the annual **Aarohan Social Innovation Awards** (up to ₹50 lakh/winner, ~₹2 crore total purse; 2025 was the 4th edition) as a cross-cutting innovation-recognition mechanism distinct from standard project grants.
 
 ### `funding_trend`
-> Infosys Limited's statutory CSR expenditure (the primary funding source for the Foundation in India):
-> | FY | CSR Expenditure (₹ crore) | YoY |
-> |---|---|---|
-> | 2020-21 | 325.32 | — |
-> | 2021-22 | 344.91 | +6.0% |
-> | 2022-23 | 391.51 | +13.5% |
-> | 2023-24 | 450.76 | +15.1% |
-> | 2024-25 | 526.26 total (₹518.95cr projects + ₹6.47cr admin + ₹0.84cr impact assessment) | +16.2% |
-> | 2025-26 | 558.44 total (₹547.50cr projects + ₹9.25cr admin + ₹1.69cr impact assessment) | +6.6% |
-> Risen every year for 6 straight years; tracked close to the statutory ~2%-of-average-net-profit ceiling (~1.96% of PAT in FY25). Unspent carry-forward small relative to total (₹16.15cr FY25, ₹19.00cr FY26) — high fund-absorption rate, not a funder sitting on undeployed cash.
-> Separately, **Infosys Foundation USA** (+ Australia/Europe) CSR spend: US$4,764,806 (FY24-25) → US$4,821,982 (FY25-26).
-> **NEW — give.do independently corroborates** Infosys Ltd.'s FY22-23 (₹391.51cr, exact match) and FY23-24 (₹450.76cr, exact match) totals, and separately tracks **Infosys BPM Limited** (a sibling subsidiary) as a *second*, distinct Section-135 entity that also routes its own CSR spend through Infosys Foundation: ₹16.35cr (FY21-22) → ₹18.17cr (FY22-23) → ₹19.53cr (FY23-24).
+> **❌ Removed.** This key previously showed Infosys Limited's own statutory CSR expenditure trend (₹325.32cr FY21 → ₹558.44cr FY26), Infosys Foundation USA's separate US$ spend, and Infosys BPM Limited's give.do-sourced CSR figures. All of this is **parent/sibling-company data, not Infosys Foundation's own** — Infosys Limited, Infosys BPM Limited, and Infosys Foundation USA are each distinct legal entities from Infosys Foundation (India) and belong on their own separate funder rows if this registry tracks them. Removed per the same scope discipline applied to Axis Bank Limited vs. Axis Bank Foundation. (See Changelog.) No Foundation-specific funding-trend figures exist to put in their place, since Infosys Foundation (India) publishes no separate financial statement of its own (see `governance_note`).
 
 ### `grant_terms`
 > Grants go overwhelmingly to registered institutions/NGOs, never to individuals. Strong preference for infrastructure/programmatic grants (hospital wings, school buildings, digital platforms) over unrestricted general support. Real disclosed cumulative amounts per recipient range from **~₹1 crore to ₹184 crore** (Bangalore Metro Rail Corporation's Konappana Agrahara Metro Station project, the largest single Infosys-Foundation-linked capital project on record). No fixed grant floor/ceiling published for standard grants; the one numerically explicit band is the competitive **Aarohan** award (₹10 lakh–₹50 lakh/winner). Application is via a standing, rolling, always-open **"Request a Grant"** online portal (no fixed annual deadline) — not relationship-only, since a public door-knock channel exists, but no committed turnaround time is published.
 
 ### `governance_note`
-> Established 1996 as a charitable trust (not a company) — **no CIN**, since trusts aren't issued one by the MCA. Headquartered at Neralu, #1/2 (1878), 11th Main, 39th Cross, 4th T Block, Jayanagar, Bengaluru 560011 (per give.do and the Foundation's own Annual Report footer) — **distinct from Infosys Limited's Electronics City registered office**. CSR governance sits with Infosys Limited's own **CSR Committee**: Govind Iyer (Chairperson), Chitra Nayak (Member), Michael Gibbs (Member) — identical composition for both FY2024-25 and FY2025-26 per Infosys's own Annexure 6, each meeting 4/4 times. **NEW finding this pass:** Infosys's own statutory Annexure 6 filing (FY2020-21) explicitly marks the "CSR registration number" column as **"NA"** for every project implemented "Through implementing agency: Infosys Foundation" — i.e., Infosys itself states in its primary statutory filing that the Foundation has **no CSR-1 number**, not merely "not found by us." See `credential_events`.
+> Established 1996 as a charitable trust (not a company) — **no CIN**, since trusts aren't issued one by the MCA. Headquartered at Neralu, #1/2 (1878), 11th Main, 39th Cross, 4th T Block, Jayanagar, Bengaluru 560011 (per give.do and the Foundation's own Annual Report footer) — **distinct from Infosys Limited's Electronics City registered office**. The Foundation itself is governed by its own Board of Trustees (see `leadership_note`); it has no separate statutory "CSR Committee" of the kind Section-135 companies must form — that requirement and body (Govind Iyer, Chitra Nayak, Michael Gibbs) belong to **Infosys Limited**, out of scope for this Foundation-only profile (see Changelog). **NEW finding this pass:** Infosys's own statutory Annexure 6 filing (FY2020-21) explicitly marks the "CSR registration number" column as **"NA"** for every project implemented "Through implementing agency: Infosys Foundation" — i.e., Infosys itself states in its primary statutory filing that the Foundation has **no CSR-1 number**, not merely "not found by us." See `credential_events`.
 
 ### `leadership_note`
 > **Trustees (per infosys.org, live as of this research):**
@@ -63,7 +68,7 @@
 > | **Shaji Mathew** | Trustee | Chief Human Resources Officer, Infosys |
 > | **Sumit Virmani** | Trustee | Global Chief Marketing Officer, Infosys |
 > | **Sunil Kumar Dhareshwar** | Trustee | Global Head — Corporate Accounting & Taxation, Facilities, Infrastructure and Security, Infosys |
-> **Infosys Foundation USA** team includes **Anand Swaminathan** (Trustee; EVP & Global Industry Leader, Infosys).
+> **❌ Removed:** Infosys Foundation USA team/leadership detail — a separate operation from Infosys Foundation (India), out of scope for this profile (see Changelog).
 > **Historical:** Founded and chaired by **Sudha Murty** (1996–2021; Padma Shri 2006, Padma Bhushan 2023); retired as Chairperson in 2021, succeeded by Salil Parekh.
 
 ### `kabil_grant_status`
@@ -149,66 +154,32 @@
 | Uttarakhand | `funds` | not_found | — | Heritage-building restoration, Champawat district — ₹1.00cr, per Infosys's own FY2020-21 Annexure 6. | https://www.primeinfobase.com/ir_download/CSRReports/CSR0000604202021_CSR_INFY_2020-21.pdf | Infosys Ltd. Annexure 6, FY2020-21 | 2026-09-29 | FY2020-21 |
 
 **Not itemised (no specific state):** "Pan-India" appears repeatedly as a stated location for programmes like eVidyaLoka Trust's teacher-support work and the "Rehabilitation and welfare of families of martyrs" project — kept as `not_found` for `location_id` rather than force-assigned to a single state.
-**Infosys Foundation USA** operates exclusively in the **United States** (K-12 computer-science/STEM education) — a separate, non-Indian-locations entity not itemised in this India-focused table.
+*(Infosys Foundation USA — a separate operation covering the United States — has been removed from this table entirely; see Changelog.)*
 
 ---
 ---
 
 ## 6. Yearly CSR filing (`funder_csr_years`)
 
-⚠️ Same attribution flag established for every funder in this registry: these are **Infosys Limited's (the parent's) own statutory CSR figures**, since Infosys Foundation itself is not Section-135-bound. Unlike Axis Bank Foundation and SBI Foundation, Infosys's own filing gives the **full Annexure-II-style breakdown**, not just a total.
-
-| fiscal_year | section_135_applicable | average_net_profit | prescribed_csr | spent_on_projects | admin_overheads | impact_assessment_cost | total_spent (₹) | unspent_transferred | excess_spent | impact_assessment_done | notes | source_url | source_name | fetched_at | as_of |
-|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| FY2024-25 | **Yes** *(applies to Infosys Limited)* | 269,924,400,000 *(₹26,992.44 cr)* | 5,398,500,000 *(₹539.85 cr, 2% of avg. net profit)* | 5,189,500,000 *(₹518.95 cr)* | 64,700,000 *(₹6.47 cr)* | 8,400,000 *(₹0.84 cr)* | **5,262,600,000** *(₹526.26 cr)* | 161,500,000 *(₹16.15 cr)* | not_found *(prior-year surplus carried IN was ₹2.56cr; total obligation ₹542.41cr against ₹526.26cr spent — a shortfall, not an excess, so `excess_spent` is not applicable this year)* | **Yes** — 26 eligible projects studied, covering 1.3 crore beneficiaries | Total CSR obligation for the year: ₹542.41 crore (₹539.85cr prescribed + ₹2.56cr prior surplus carried in). 32 capital assets created/acquired. | https://www.infosys.com/investors/reports-filings/annual-report/annual/documents/infosys-ar-25.pdf | Infosys Ltd. Integrated Annual Report 2024-25, Annexure 6 | 2026-09-29 | FY2024-25 |
-| FY2025-26 | **Yes** | 288,480,300,000 *(₹28,848.03 cr)* | 5,769,600,000 *(₹576.96 cr)* | 5,475,000,000 *(₹547.50 cr)* | 92,500,000 *(₹9.25 cr)* | 16,900,000 *(₹1.69 cr)* | **5,584,400,000** *(₹558.44 cr)* | 190,000,000 *(₹19.00 cr)* | not_found | **Yes** — 12 eligible projects studied | Total CSR obligation: ₹577.36 crore (₹576.96cr prescribed + ₹0.40cr prior surplus carried in). 24 capital assets created/acquired. Additional spend on ongoing multi-year projects from prior years: ₹9.21 crore. | https://www.infosys.com/investors/reports-filings/annual-report/annual/documents/infosys-ar-26.pdf | Infosys Ltd. Integrated Annual Report 2025-26, Annexure 6 | 2026-09-29 | FY2025-26 |
-| FY2020-21 | Yes | not_found *(not captured in the pre-existing research pass — only the total is known)* | not_found | not_found | not_found | not_found | **3,253,200,000** *(₹325.32 cr)* | not_found | not_found | Not found | Only the headline total was captured in the prior research pass; the full breakdown exists in the same Annexure 6 document already cited for the CSR-1 "NA" finding and could be added in a follow-up pass. | https://www.primeinfobase.com/ir_download/CSRReports/CSR0000604202021_CSR_INFY_2020-21.pdf | Infosys Ltd. Annexure 6, FY2020-21 | 2026-09-29 | FY2020-21 |
-| FY2021-22 | Yes | not_found | not_found | not_found | not_found | not_found | **3,449,100,000** *(₹344.91 cr)* | not_found | not_found | Not found | Headline total only; cross-confirmed by give.do (₹345.00 Cr — near-exact match, small rounding difference). | https://give.do/discover/1C6J/infosys-limited | give.do (cross-check) | 2026-09-29 | FY2021-22 |
-| FY2022-23 | Yes | not_found | not_found | not_found | not_found | not_found | **3,915,100,000** *(₹391.51 cr)* | not_found | not_found | Not found | Headline total only; give.do independently confirms this figure **exactly**. Cause-wise breakdown available — see `funder_csr_spend` (Table 7). | https://give.do/discover/1C6J/infosys-limited | give.do (cross-check) | 2026-09-29 | FY2022-23 |
-| FY2023-24 | Yes | not_found | not_found | not_found | not_found | not_found | **4,507,600,000** *(₹450.76 cr)* | not_found | not_found | Not found | Headline total only; give.do independently confirms this figure **exactly**. | https://give.do/discover/1C6J/infosys-limited | give.do (cross-check) | 2026-09-29 | FY2023-24 |
+**❌ Table removed — not applicable to Infosys Foundation.** The figures previously shown here (average net profit, 2%-prescribed CSR, admin overheads, unspent-transferred amounts, FY2020-21 through FY2025-26) are **Infosys Limited's own statutory Section-135 figures** — they belong on a separate **Infosys Limited** funder row, not on Infosys Foundation's profile. Unlike Axis Bank Foundation (which publishes its own "Financial Highlights") or SBI Foundation (a Section 8 *company* that files its own audited accounts), **Infosys Foundation is a Trust that publishes no separate financial statement of its own** — its own narrative Annual Reports explicitly state: *"The financial details of Infosys Foundation's activities... are given in the Infosys Integrated Annual Report."* There is therefore no Foundation-specific version of this table to populate; keeping the parent's numbers here under Infosys Foundation's name would misattribute them. (See Changelog at the top of this file.)
 
 ---
 ---
 
 ## 7. Spend breakdown (`funder_csr_spend`)
 
-**(A) Cause-wise category totals — FY2022-23, from give.do's Infosys Limited profile (a real, unlocked breakdown not published in this exact format by Infosys's own PDFs):**
+**❌ Removed: the FY2022-23 cause-wise category totals** (Education ₹120.30cr, Environmental Sustainability ₹106.42cr, Healthcare ₹77.04cr, etc.) that previously appeared here as "Part (A)". That breakdown came from give.do's ***Infosys Limited*** profile page and represents the **parent's total CSR spend across all implementation channels combined** (direct-by-company, via Infosys Foundation, and via other unrelated implementing agencies) — it cannot be attributed specifically to Infosys Foundation's own activity, so it has been removed from the Foundation's spend table rather than misrepresented as Foundation-specific. (See Changelog.)
 
-| fiscal_year | csr_sector_id (Schedule VII mapping) | amount (₹) | via_agency | is_ongoing | notes | source_url | source_name | fetched_at | as_of |
-|---|---|---|---|---|---|---|---|---|---|
-| FY2022-23 | Education / Special Education | 1,203,000,000 | Yes | Yes | Largest single cause line item. | https://give.do/discover/1C6J/infosys-limited | give.do | 2026-09-29 | FY2022-23 |
-| FY2022-23 | Environmental Sustainability | 1,064,200,000 | Yes | Yes | — | (same) | (same) | 2026-09-29 | FY2022-23 |
-| FY2022-23 | Healthcare | 770,400,000 | Yes | Yes | — | (same) | (same) | 2026-09-29 | FY2022-23 |
-| FY2022-23 | Conservation of Natural Resources | 317,800,000 | Yes | Yes | — | (same) | (same) | 2026-09-29 | FY2022-23 |
-| FY2022-23 | Armed Forces Veterans & Dependents | 200,000,000 | Yes | Yes | Not a named Infosys Foundation focus area on its own site — see the `funder_tags` discrepancy flag. | (same) | (same) | 2026-09-29 | FY2022-23 |
-| FY2022-23 | Art & Culture | 196,000,000 | Yes | Yes | — | (same) | (same) | 2026-09-29 | FY2022-23 |
-| FY2022-23 | Safe Drinking Water | 66,700,000 | Yes | Yes | — | (same) | (same) | 2026-09-29 | FY2022-23 |
-| FY2022-23 | Rural Development Projects | 59,000,000 | Yes | Yes | — | (same) | (same) | 2026-09-29 | FY2022-23 |
-| FY2022-23 | Disaster Management | 12,400,000 | Yes | Yes | — | (same) | (same) | 2026-09-29 | FY2022-23 |
-| FY2022-23 | Women Empowerment | 12,200,000 | Yes | Yes | Smallest cause line item this year despite being a stated primary focus area — genuine oddity, not smoothed over. | (same) | (same) | 2026-09-29 | FY2022-23 |
-| FY2022-23 | *(Sum of causes)* | 3,901,700,000 | — | — | Reconciles closely with the ₹391.51cr official total (small gap = admin/impact-assessment overhead not allocated to a cause). | (same) | (same) | 2026-09-29 | FY2022-23 |
-
-**(B) Named individual projects ≥ ₹1 crore — FY2024-25 and FY2025-26, from Infosys Limited's own Annexure 6 capital-asset tables (real project + real amount, the strongest-possible evidence tier):**
+**Named individual projects — CONFIRMED as Infosys-Foundation-implemented only** (re-checked this pass: Infosys Limited's own Annual Action Plan prints a "Mode of Implementation — Through" column, and only the two rows below explicitly name **"Infosys Foundation"** in that column for a matching project description + state. The remaining rows previously listed here — Ashoka University, Madras Medical College, Biogas/Bagalakote, Ramakrishna Mission, the Kodagu government flood-relief houses, Hyderabad Eye Institute/LVPEI, Data Security Council of India, and BMRCL — have been **removed from this table** because their "Mode of Implementation" was not confirmed as Infosys Foundation specifically; they may be direct-by-Infosys-Limited spend or routed through a different, unrelated CSR implementing agency. Removing them here does not mean they are false — only that they don't belong in *this* Foundation-only table without confirmation. See the Changelog and Table 10 note on where these NGO names are still legitimately kept, where applicable.):
 
 | fiscal_year | project_name | implementing_agency | state_location | district | amount (₹, this FY) | amount (₹, cumulative) | via_agency | agency_csr1 | notes | source_url |
 |---|---|---|---|---|---|---|---|---|---|---|
-| FY2024-25 | Advanced chemical biology lab setup | International Foundation for Research and Education (Ashoka University) | Delhi | New Delhi | 231,000,000 | 270,000,000 | Yes | CSR00000712 | — | https://www.infosys.com/investors/reports-filings/annual-report/annual/documents/infosys-ar-25.pdf |
-| FY2024-25 | Medical equipment | Madras Medical College | Tamil Nadu | Chennai | 117,500,000 | 310,600,000 | Yes | not_found | — | (same) |
-| FY2024-25 | Medical equipment & software, Mother & Child Block | AIIMS | Delhi | New Delhi | 62,700,000 | 764,700,000 | Yes | not_found | — | (same) |
-| FY2024-25 | Biogas units for smoke-free kitchens | Various beneficiaries (individual households) | Karnataka | Bagalakote | 38,400,000 | 38,400,000 | Yes | not_found | — | (same) |
-| FY2024-25 | STEM labs at 60 schools | Ramakrishna Mission | West Bengal | Howrah | 21,300,000 | 269,500,000 | Yes | CSR00006101 | — | (same) |
-| FY2024-25 | 200 flood-relief houses, Kodagu | Office of Addl. Deputy Commissioner (Rehabilitation) | Karnataka | Madikeri | 14,800,000 | 315,700,000 | No *(government office — direct implementation, not via an NGO)* | not_found | — | (same) |
-| FY2025-26 | Medical equipment & software, Universal Cornea Care Mission | Hyderabad Eye Institute (LVPEI) | Telangana | Hyderabad | 210,800,000 | 396,800,000 | Yes | CSR00001698 | — | https://www.infosys.com/investors/reports-filings/annual-report/annual/documents/infosys-ar-26.pdf |
-| FY2025-26 | Cybercrime investigation center | Data Security Council of India | Karnataka | Bengaluru | 53,800,000 | 97,500,000 | Yes | CSR0001 1848 *(exact spacing as printed in source — likely a formatting artifact of a longer registration number)* | — | (same) |
-| FY2025-26 | Interiors & maintenance, Konappana Agrahara Metro Station | Bangalore Metro Rail Corporation Ltd (BMRCL) | Karnataka | Bengaluru | 15,700,000 | **1,839,600,000** | Yes | not_found | **Largest single Infosys-Foundation-linked capital project on record.** | (same) |
-| FY2025-26 | Agroforestry / farmer livelihoods | Kalinga Kusum Foundation (KKF) | Odisha | Bhubaneswar | 10,500,000 | 10,500,000 | Yes | CSR00004313 | — | (same) |
+| FY2024-25 | Medical equipment & software, Mother & Child Block | AIIMS | Delhi | New Delhi | 62,700,000 | 764,700,000 | Yes | not_found | Annual Action Plan explicitly lists "Mode of implementation – Through: Infosys Foundation" for this exact project (Delhi, Mother & Child Block, medical equipment). | https://www.infosys.com/investors/reports-filings/annual-report/annual/documents/infosys-ar-25.pdf ; https://www.infosys.com/investors/reports-filings/documents/csr-projects2024-25.pdf |
+| FY2025-26 | Advance Mother & Child Center (AMCC) — high-end medical equipment | PGIMER Chandigarh | Chandigarh | Chandigarh | not_found *(this-FY amount not separately captured — only the cumulative figure below was found)* | 514,500,000 *(₹51.45 crore cumulative)* | Yes | not_found | Annual Action Plan explicitly lists "Mode of implementation – Through: Infosys Foundation" for this exact project (Chandigarh, AMCC, high-priority medical equipment). | https://www.infosys.com/investors/reports-filings/annual-report/annual/documents/infosys-ar-26.pdf ; https://www.infosys.com/investors/reports-filings/documents/csr-projects2026-27.pdf |
 
-**Additional cumulative-only figures disclosed in FY2025-26 footnotes (project ongoing/completed earlier — useful for grant-size benchmarking, but no single-year FY26 amount given):**
-- PGIMER Chandigarh (medical equipment): **₹51.45 crore** cumulative
-- Skill Development Training Center: **₹10.31 crore** cumulative
-- Girls' hostel, Pune (Shrimad Rajchandra Aatma Tatva Research Center): **₹9 crore** cumulative
+**Removed pending confirmation (real amounts exist in Infosys Limited's own Annexure 6, but "Mode of Implementation" for these specific rows was not verified as "Infosys Foundation" in this pass — do not treat as Foundation spend until confirmed):** Ashoka University chemical biology lab (₹27.00cr cumulative) · Madras Medical College medical equipment (₹31.06cr cumulative) · Biogas units, Bagalakote (₹3.84cr) · Ramakrishna Mission STEM labs, Howrah (₹26.95cr cumulative; CSR00006101) · Kodagu flood-relief houses (₹31.57cr cumulative; government-direct, not an NGO) · Hyderabad Eye Institute/LVPEI Universal Cornea Care Mission (₹39.68cr cumulative; CSR00001698) · Data Security Council of India cybercrime centre (₹9.75cr cumulative) · BMRCL Konappana Agrahara Metro Station (₹183.96cr cumulative — the single largest figure in the entire prior draft) · Kalinga Kusum Foundation agroforestry (₹1.05cr). **These are genuinely real Infosys Limited CSR figures** — just not confirmed as Foundation-routed, so excluded from this table pending verification (a follow-up pass should check each project's row in the Annual Action Plan's "Mode of implementation" column individually).
 
-**Not itemised individually:** projects under ₹1 crore each are not broken out in the Annual Report itself; full sub-₹1cr lists exist at separate URLs (`csr-capital-assets2024-25.pdf` / `csr-capital-assets2025-26.pdf`) not yet downloaded in either research pass.
+**Not itemised individually:** projects under ₹1 crore each are not broken out in the Annual Report itself.
 
 ---
 ---
@@ -356,11 +327,9 @@ Bharatiya Vidya Bhavan (Kala Dhwani + Khincha Auditorium renovation + Indian Art
 | Shaji Mathew | Trustee | office_bearer | Yes | Yes | Also Chief Human Resources Officer, Infosys. | (same) | (same) | Current |
 | Sumit Virmani | Trustee | office_bearer | Yes | Yes | Also Global Chief Marketing Officer, Infosys; quoted directly in the FY2023-24 Foundation Report re: eVidyaLoka Trust. | (same) | (same) | Current |
 | Sunil Kumar Dhareshwar | Trustee | office_bearer | Yes | Yes | Also Global Head — Corporate Accounting & Taxation, Facilities, Infrastructure and Security, Infosys. | (same) | (same) | Current |
-| Anand Swaminathan | Trustee, Infosys Foundation USA | office_bearer | Yes | Yes | Also EVP & Global Industry Leader, Infosys. | https://www.infosys.org/infosys-foundation-usa/about/our-team.html | Infosys Foundation USA website | Current |
-| Govind Iyer | Chairperson, Infosys Limited CSR Committee | office_bearer | Yes | Yes | Bank/company-level CSR governance, not a Foundation Trustee — kept distinct per the convention used for other funders' Bank-vs-Foundation contact separation. Meetings: 4/4 both FY25 and FY26. | https://www.infosys.com/investors/reports-filings/annual-report/annual/documents/infosys-ar-26.pdf | Infosys Ltd. Integrated Annual Report 2025-26 | FY2025-26 |
-| Chitra Nayak | Member, Infosys Limited CSR Committee | office_bearer | Yes | Yes | 4/4 both years. | (same) | (same) | FY2025-26 |
-| Michael Gibbs | Member, Infosys Limited CSR Committee | office_bearer | Yes | Yes | 4/4 both years. | (same) | (same) | FY2025-26 |
 | Sudha Murty | Founder & first Chairperson (historical, 1996-2021) | office_bearer | Yes | Yes | Padma Shri (2006), Padma Bhushan (2023); retired from the Foundation in 2021. Kept for audit trail, not deleted. | https://en.wikipedia.org/wiki/Infosys_Foundation | Wikipedia | Historical |
+
+**❌ Removed:** Govind Iyer, Chitra Nayak, Michael Gibbs — these are members of **Infosys Limited's** statutory CSR Committee (a parent-company board sub-committee under Section 135), not Trustees or staff of Infosys Foundation. Exactly analogous to the removal of Axis Bank Limited's CSR Committee from the Axis Bank Foundation contacts table. (See Changelog.)
 
 ---
 ---

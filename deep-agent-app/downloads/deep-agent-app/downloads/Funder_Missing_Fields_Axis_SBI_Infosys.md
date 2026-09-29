@@ -6,6 +6,86 @@
 
 ---
 
+## Scorecard: how complete is each profile?
+
+### How the score works
+Each field is **weighted by how much it matters.** A missing grant amount costs a lot; a missing archive link costs very little.
+
+| Weight | Which fields | Examples |
+|---|---|---|
+| **3 points** | **Core facts**: the actual data | name, website, PAN, amount, fiscal_year, partner_name, programme description, metric value |
+| **1 point** | **Supporting detail** and the `source_url` | start/end dates, email, target, is_ongoing, partner type |
+| **0.25 points** | **Bookkeeping** | archive_url, fetched_at, source_name, as_of, notes, verified, tagged_by |
+| **Not scored** | Database IDs and links, plus fields that don't apply to a trust | funder_id, org_id, location_id; average_net_profit, prescribed_csr, unspent/excess spent |
+
+- **Scoring:** a field counts fully if it's filled correctly, 75% if it's filled but has a problem, and 0 if it's missing.
+- **Parent data:** parent-company data (Axis Bank Ltd, State Bank of India, Infosys Ltd) scores 0, because it will be removed.
+- **Tables left out:** tables that don't apply (e.g. Axis runs no calls for proposals) aren't scored.
+
+### Result
+
+| | Axis Bank Foundation | SBI Foundation | Infosys Foundation |
+|---|---|---|---|
+| **Overall score (weighted)** | **72% 🟡** | **60% 🟡** | **49% 🔴** |
+| Core facts only | 81% 🟡 | 67% 🟡 | 58% 🔴 |
+| Grants with a ₹ amount | 0 of 23 | 0 of 6 | 0 of 2 (the other 9 rows are Infosys Ltd's) |
+| Values ready to copy in (section 2 of each funder) | 14 | 10 | 5 |
+| Suggested `registry_status` | `in_vetting` | `in_vetting` | `in_vetting` |
+
+🟢 85% or more · 🟡 60–84% · 🔴 below 60%
+
+**Rule for `registry_status`:** set `full_profile` when the overall score is 85% or more, core facts are 90% or more, no parent data is left and grant amounts are present. Otherwise keep `in_vetting`.
+
+### By area
+
+| Area | Axis | SBI | Infosys |
+|---|---|---|---|
+| Identity | 91% 🟢 | 82% 🟡 | 83% 🟡 |
+| Money | 50% 🔴 | 28% 🔴 | 4% 🔴 |
+| Programmes & reach | 77% 🟡 | 71% 🟡 | 59% 🔴 |
+| People & partners | 67% 🟡 | 80% 🟡 | 50% 🔴 |
+| Focus & places | 67% 🟡 | 79% 🟡 | 69% 🟡 |
+| How to apply | n/a | 32% 🔴 | 39% 🔴 |
+| Evidence | 79% 🟡 | 82% 🟡 | 68% 🟡 |
+
+**Money is the weakest area for all three** (Axis 50%, SBI 28%, Infosys 4%). The main reason:
+- No NGO grant has an amount.
+
+### By table (and which core facts are missing)
+
+| # | Table | Axis | SBI | Infosys | Core facts missing or wrong |
+|---|---|---|---|---|---|
+| 1 | funders | 96% 🟢 | 81% 🟡 | 91% 🟢 | Axis: profile · SBI: profile · Infosys: website, profile |
+| 2 | funder_identifiers | 97% 🟢 | 93% 🟢 | 88% 🟢 | Infosys: id_value |
+| 3 | credential_events | 80% 🟡 | 76% 🟡 | 68% 🟡 | Axis: event_date · SBI: event, event_date · Infosys: event, event_date |
+| 4 | funder_tags | 98% 🟢 | 100% 🟢 | 98% 🟢 |  |
+| 5 | funder_locations | 51% 🔴 | 68% 🟡 | 53% 🔴 | Axis: role · SBI: role · Infosys: role |
+| 6 | funder_csr_years | 46% 🔴 | 0% 🔴 | 0% 🔴 | Axis: spent_on_projects, admin_overheads, total_spent · SBI: fiscal_year, spent_on_projects, admin_overheads, total_spent · Infosys: fiscal_year, spent_on_projects, admin_overheads, total_spent |
+| 7 | funder_csr_spend | 50% 🔴 | 26% 🔴 | 0% 🔴 | Axis: project_name, implementing_agency · SBI: project_name, implementing_agency, amount · Infosys: fiscal_year, project_name, implementing_agency, amount |
+| 8 | programs | 75% 🟡 | 76% 🟡 | 73% 🟡 | Axis: description · Infosys: status |
+| 9 | funder_footprints | 83% 🟡 | 84% 🟡 | 56% 🔴 | Axis: fiscal_year · SBI: name_as_printed · Infosys: fiscal_year, name_as_printed |
+| 10 | funder_partners | 54% 🔴 | 83% 🟡 | 49% 🔴 | Axis: partner_kind · SBI: partner_kind · Infosys: fiscal_year, partner_kind |
+| 11 | grants | 52% 🔴 | 61% 🟡 | 12% 🔴 | Axis: amount, status · SBI: amount · Infosys: title, amount, status |
+| 12 | rfps | n/a | 46% 🔴 | 72% 🟡 | SBI: url, status, deadline, eligibility · Infosys: url |
+| 13 | proposal_templates | n/a | 0% 🔴 | 0% 🔴 | SBI: name, kind · Infosys: name, kind |
+| 14 | contacts | 80% 🟡 | 78% 🟡 | 50% 🔴 | SBI: kind · Infosys: name, role, kind |
+| 15 | metrics | 72% 🟡 | 77% 🟡 | 74% 🟡 | Axis: value, unit, period, stage · SBI: value, unit, stage · Infosys: value, period, stage |
+| 16 | documents | 95% 🟢 | 88% 🟢 | 35% 🔴 | SBI: source_url · Infosys: title, doc_type, source_url |
+| 17 | news_mentions | 68% 🟡 | 71% 🟡 | 86% 🟢 | Axis: url, seendate · SBI: url, seendate · Infosys: seendate |
+| 18 | reference_figures | 81% 🟡 | 88% 🟢 | 71% 🟡 | Axis: value · SBI: kind, value · Infosys: kind, value |
+| 19 | program_locations | 64% 🟡 | 0% 🔴 | 0% 🔴 | SBI: role · Infosys: role |
+| 20 | program_tags | 100% 🟢 | 98% 🟢 | 93% 🟢 |  |
+| 21 | grant_locations | 95% 🟢 | 90% 🟢 | 15% 🔴 | Infosys: note |
+| 22 | rfp_locations | n/a | 68% 🟡 | 48% 🔴 | Infosys: role |
+| 23 | rfp_tags | n/a | 100% 🟢 | 100% 🟢 |  |
+| 24 | template_items | n/a | 0% 🔴 | 0% 🔴 | SBI: ord, item_kind, heading · Infosys: ord, item_kind, heading |
+
+"Missing or wrong" means the field is empty, or filled with a problem (see each funder's Fix section). For Infosys, some fields are listed only because most of the rows are Infosys Ltd data, which gets removed: contacts, documents, grants, footprints.
+
+The same numbers are in **`Funder_Completeness_Scores.csv`**, one row per funder per table, ready to load into the database or a sheet. Re-run the scoring after each round of edits to track progress.
+
+---
+
 ## What is this file?
 
 We are building one profile per funder, to load into the Sangam database. This file lists **what is still missing or wrong in each profile**, so anyone on the team can pick up a task and fix it.
@@ -59,6 +139,7 @@ Each funder has the same 5 sections:
 | **Biggest gap** | No grant amounts for any NGO | Two RFP PDFs are downloaded but not used | Most spend and grant data is Infosys Ltd's, not the Foundation's |
 | **Biggest error** | ID numbers marked "not found" but they exist (AR 2014-15) | Two different leadership lists | CSR-1 marked "not available" (probably wrong) |
 | **Values ready to fill now** | 14 | 10 | 5 |
+| **Weighted score** | 72% | 60% | 49% |
 
 ### Problems in all three profiles
 1. **No grant amounts** for any NGO.
