@@ -1,0 +1,39 @@
+# Cost filters and distribution bins. Priority bands are NOT assigned by code.
+# The user sets cutoffs after reading distribution_report.md.
+
+windows:
+  india_window_years: 5
+  recent_window_years: 3
+
+distribution_bins_usd: [10000, 50000, 100000, 250000, 500000, 1000000]
+distribution_bins_inr_crore_for_indian_sources: [1, 5, 10, 25, 50, 100]
+
+pool_cost_filters:
+  western_funders:
+    irs_990pf: "keep filers with at least one grant whose recipient country is not the US in the window"
+    iati: "keep non-government reporting organisations; route government and multilateral publishers to bilateral_multilateral"
+    oecd: "keep all"
+  indian_csr: "keep companies with any CSR spend recorded in the last 3 financial years"
+  hni_family: "keep all named donors and foundations on the source lists"
+  government_india: "keep schemes that name NGOs or voluntary organisations as eligible, or whose eligibility is unclear"
+  bilateral_multilateral: "keep reporting organisations with at least one activity where recipient country is India"
+
+priority_bands:
+  status: proposed_only
+  note: "Suggested starting point after the distribution is seen: P1 top 10 percent, P2 next 30 percent, P3 the rest. Do not apply."
+
+ingest_quota:
+  note: "Set after the distribution report. Number of funders to seed first per category."
+  western_funders: null
+  indian_csr: null
+  hni_family: null
+  government_india: null
+  bilateral_multilateral: null
+
+llm:
+  budget_usd: null   # set before Phase 2; Claude Code must ask if null and an LLM step is needed
+  use_for: ["grant purpose to theme mapping where rules fail"]
+  cache: true
+
+fx:
+  note: "Where a source is not in USD, convert at the annual average rate for the grant year. Record the rate and its source in evidence.csv."
