@@ -1,0 +1,26 @@
+# Curated aliases: canonical name -> other spellings seen in sources. Applied before funder_id is computed,
+# so all spellings land on one row. Add entries when review_queue shows the same organisation twice.
+# Reviewed by: (pending user review)
+western_funders:
+  "Bill & Melinda Gates Foundation": ["Gates Foundation", "BILL AND MELINDA GATES FOUNDAT", "BMGF-Bill & Melinda Gates Foundation", "BMGF", "Bill and Melinda Gates Foundation"]
+  "Children's Investment Fund Foundation (CIFF)": ["CIFF-Children’s Investment Fund Foundations", "Children's Investment Fund Foundation", "Children’s Investment Fund Foundation", "CIFF"]
+  "Bloomberg Philanthropies": ["Bloomberg Family Foundation", "The Bloomberg Family Foundationcomma In", "Bloomberg Family Foundation Inc"]
+  "MacArthur Foundation": ["John D. and Catherine T. Macarthur Foundation", "John D. and Catherine T. MacArthur Foundation"]
+  "William and Flora Hewlett Foundation": ["The William and Flora Hewlett Foundation", "Hewlett Foundation"]
+
+bilateral_multilateral:
+  # pending user review. IBRD and IDA report through the World Bank IATI publisher; keep as aliases, not new funders.
+  World Bank:
+    - International Bank For Reconstruction And Development (IBRD)
+    - International Bank for Reconstruction and Development
+    - International Development Association (IDA)
+  The Global Fund to Fight AIDS, Tuberculosis and Malaria:
+    - Global Fund Organization
+    - The Global Fund
+  Asian Infrastructure Investment Bank:
+    - Asia Infrastructure Investment Bank (AIIB)
+
+hni_family:
+  Rohini Nilekani Philanthropies: [Rohini Nilekani Philanthropies Foundation]
+  Arghyam: [Arghyam Trust]
+  Mariwala Health Foundation: [Mariwala Health]

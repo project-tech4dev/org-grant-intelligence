@@ -1,0 +1,46 @@
+# Ranking weights per category. Each category sums to 100.
+# Method: for each signal, take the percentile rank (0 to 1) within the category, multiply by the weight, and sum.
+# Unknown signal: use half the category median percentile and set unknown_signals in signals.csv.
+# These are starting values. Change them after reading the first distribution report.
+method: percentile_within_category
+unknown_signal_penalty: 0.5
+
+western_funders:
+  india_usd_5y: 30
+  recency_3y: 15
+  breadth_recipients_and_grants: 15
+  india_share_of_giving: 10
+  funds_ngos_share: 15
+  ingest_readiness: 10
+  evidence_quality: 5
+
+indian_csr:
+  csr_spend_3y_average: 40
+  project_count: 15
+  theme_breadth: 10
+  has_foundation_arm: 5
+  ingest_readiness: 20
+  evidence_quality: 10
+
+hni_family:
+  annual_giving_latest: 35
+  five_year_giving_total: 20
+  list_appearances_5y: 15
+  has_named_foundation: 10
+  funds_ngos_externally: 10
+  ingest_readiness: 10
+
+government_india:
+  scheme_budget: 30
+  ngo_eligible_explicit: 25
+  active_call_12m: 20
+  recurrence: 10
+  ingest_readiness: 15
+
+bilateral_multilateral:
+  india_usd_5y: 30
+  ngo_channel_share: 25
+  recency_3y: 15
+  activity_count: 10
+  ingest_readiness: 10
+  evidence_quality: 10

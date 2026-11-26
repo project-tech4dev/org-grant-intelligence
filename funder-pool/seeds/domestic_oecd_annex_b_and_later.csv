@@ -1,0 +1,54 @@
+No,Organisation (as printed),Clean name,OECD type (as printed),Data,Seen in,Draft funder_type,Draft india_csr,In Sangam today,Note
+1,Associated Cement Companies (ACC) Limited,ACC Limited,CSR,Primary,2019 report,csr_company,true,No,
+2,Adani Port & SEZ,Adani Ports and SEZ Limited,CSR,Secondary,2019 report,csr_company,true,No,
+3,Ambuja Cements Limited,Ambuja Cements Limited,CSR,Primary,2019 report,csr_company,true,No,
+4,Arghyam,Arghyam,Family Foundation,Primary,2019 report; Third Edition sample,private_foundation,false,No,
+5,Asian Paints Limited,Asian Paints Limited,CSR,Secondary,2019 report,csr_company,true,No,
+6,Axis bank Limited,Axis Bank Limited,CSR,Secondary,2019 report,csr_company,true,Related,Axis Bank Foundation is in Sangam; the bank is not. Link as parent.
+7,Bajaj Auto Limited,Bajaj Auto Limited,CSR,Secondary,2019 report,csr_company,true,No,
+8,Bharti Infatel Limite,Bharti Infratel Limited,CSR,Secondary,2019 report,csr_company,true,No,May have merged or been renamed since 2013-17. Verify the current legal entity.
+9,Cairn India ltd,Cairn India Limited,CSR,Secondary,2019 report,csr_company,true,No,May have merged or been renamed since 2013-17. Verify the current legal entity.
+10,Castrol India Limited,Castrol India Limited,CSR,Secondary,2019 report,csr_company,true,No,Indian entity of a foreign group. Check the FCRA foreign-source rule before setting money_origin (#324 legal check).
+11,Deutsche Bank,Deutsche Bank (India),CSR,Primary,2019 report,csr_company,true,No,Indian entity of a foreign group. Check the FCRA foreign-source rule before setting money_origin (#324 legal check).
+12,Dr Reddys Foundation,Dr Reddy's Foundation,Corporate Foundation,Primary,2019 report,csr_foundation,true,No,Confirm it spends a bound company's Section 135 money before setting india_csr = true.
+13,Hindustan Computer Limited (HCL) Technologies Limited,HCL Technologies Limited,CSR,Primary,2019 report,csr_company,true,No,
+14,Housing Development Finance Corporation (HDFC) bank Limited,HDFC Bank Limited,CSR,Secondary,2019 report,csr_company,true,Yes,HDFC Bank is already a Sangam funder.
+15,Hero Motocorp Limited,Hero MotoCorp Limited,CSR,Secondary,2019 report,csr_company,true,No,
+16,Hindustan Zinc Limited,Hindustan Zinc Limited,CSR,Secondary,2019 report,csr_company,true,No,
+17,International Business Machines (IBM) India Pvt. Limited,IBM India Private Limited,CSR,Secondary,2019 report,csr_company,true,No,Indian entity of a foreign group. Check the FCRA foreign-source rule before setting money_origin (#324 legal check).
+18,Industrial Credit & Investment Corporation of India (ICICI) Bank Limited,ICICI Bank Limited,CSR,Secondary,2019 report,csr_company,true,No,
+19,Infrastructure Development Finance Corporation (IDFC) Limited,IDFC Limited,CSR,Secondary,2019 report,csr_company,true,No,May have merged or been renamed since 2013-17. Verify the current legal entity.
+20,Indiabulls Housing Finance Limited,Indiabulls Housing Finance Limited,CSR,Secondary,2019 report,csr_company,true,No,May have merged or been renamed since 2013-17. Verify the current legal entity.
+21,IndusInd Bank Limited,IndusInd Bank Limited,CSR,Secondary,2019 report,csr_company,true,No,
+22,Infosys Limited,Infosys Limited,CSR,Secondary,2019 report,csr_company,true,Related,Infosys Foundation is in Sangam; the company is not. Link as parent.
+23,Independent & Public-Spirited Media Foundation (IPSMF),Independent and Public-Spirited Media Foundation (IPSMF),Other,Primary,2019 report,other,review,No,Type 'Other' in the OECD list; check whether it re-grants (intermediary).
+24,Imperial Tobacco Company (ITC) Limited,ITC Limited,CSR,Primary,2019 report,csr_company,true,Yes,ITC is already a Sangam funder.
+25,Jindal Stainless Steel,Jindal Stainless Limited,CSR,Primary,2019 report,csr_company,true,No,
+26,Jindal Steels & Power Limited,Jindal Steel & Power Limited,CSR,Secondary,2019 report,csr_company,true,No,
+27,JP Morgan,JP Morgan (India),CSR,Primary,2019 report,csr_company,true,No,Indian entity of a foreign group. Check the FCRA foreign-source rule before setting money_origin (#324 legal check).
+28,Jubilant Bhartia Foundation,Jubilant Bhartia Foundation,Corporate Foundation,Primary,2019 report,csr_foundation,true,No,Confirm it spends a bound company's Section 135 money before setting india_csr = true.
+29,Larsen & Toubro Financial Services (LTFS),L&T Financial Services,CSR,Primary,2019 report,csr_company,true,No,
+30,Larsen & Toubro Public Charitable Trust (LTPCT),Larsen & Toubro Public Charitable Trust,Corporate Foundation,Primary,2019 report,csr_foundation,true,No,Confirm it spends a bound company's Section 135 money before setting india_csr = true.
+31,Larsen and Toubro Limited,Larsen & Toubro Limited,CSR,Secondary,2019 report,csr_company,true,No,
+32,Mahindra & Mahindra Limited,Mahindra & Mahindra Limited,CSR,Primary,2019 report,csr_company,true,No,
+33,Maruti Suzuki India Limited,Maruti Suzuki India Limited,CSR,Secondary,2019 report,csr_company,true,No,
+34,Mphasis Limited,Mphasis Limited,CSR,Primary,2019 report,csr_company,true,No,
+35,National Thermal Power Corporation (NTPC) Limited,NTPC Limited,CSR,Secondary,2019 report,csr_company,true,No,
+36,Oil & Natural Gas Corporation (ONGC) Limited,ONGC Limited,CSR,Secondary,2019 report,csr_company,true,No,
+37,Piramal Enterprises Limited,Piramal Enterprises Limited,CSR,Secondary,2019 report,csr_company,true,No,
+38,Piramal Foundation,Piramal Foundation,Family Foundation,Primary,2019 report,private_foundation,review,No,OECD calls it a family foundation; the group's CSR may also flow through it.
+39,Reliance India Limited,Reliance India Limited (as printed),CSR,Secondary,2019 report,csr_company,true,Related,Reliance Foundation is in Sangam. OECD printed 'Reliance India Limited'; confirm the legal entity.
+40,Reliance Infrastructure Limited,Reliance Infrastructure Limited,CSR,Secondary,2019 report,csr_company,true,No,
+41,Rohini Nilekani Philanthropies,Rohini Nilekani Philanthropies,Family Foundation,Primary,2019 report; Third Edition sample,private_foundation,false,No,
+42,Samsung India Electronics Private Limited,Samsung India Electronics Private Limited,CSR,Secondary,2019 report,csr_company,true,No,Indian entity of a foreign group. Check the FCRA foreign-source rule before setting money_origin (#324 legal check).
+43,Tata Power Company Limited,Tata Power Company Limited,CSR,Secondary,2019 report,csr_company,true,No,
+44,Tata Steel Limited,Tata Steel Limited,CSR,Secondary,2019 report,csr_company,true,Related,Tata Steel Foundation is in Sangam; the company is not. Link as parent.
+45,Tata Consultancy Services (TCS) Limited,Tata Consultancy Services Limited,CSR,Secondary,2019 report,csr_company,true,Yes,TCS is already a Sangam funder.
+46,Tech Mahindra Limited,Tech Mahindra Limited,CSR,Secondary,2019 report,csr_company,true,No,
+47,Titan Limited,Titan Limited,CSR,Primary,2019 report,csr_company,true,No,
+48,Ultratech cement Limited,UltraTech Cement Limited,CSR,Secondary,2019 report,csr_company,true,No,
+49,Wipro Limited,Wipro Limited,CSR,Secondary,2019 report,csr_company,true,No,
+50,Zee entertainment enterprises Limited,Zee Entertainment Enterprises Limited,CSR,Secondary,2019 report,csr_company,true,No,
+n/a,Tata Trusts,Tata Trusts,Not in 2019 Annex B,n/a,Third Edition sample; 2018 edition,private_foundation,false,Yes,Largest domestic provider in the Third Edition sample. Already in Sangam (typed family_trust_network today).
+n/a,EdelGive Foundation,EdelGive Foundation,Not in 2019 Annex B,n/a,Third Edition sample,review,review,Yes,Already in Sangam as corporate_foundation; #324 marks it for review as an intermediary.
+n/a,ATE Chandra Foundation,ATE Chandra Foundation,Not in 2019 Annex B,n/a,Third Edition sample,private_foundation,false,No,Seen in an excerpt of the Third Edition sample list only.

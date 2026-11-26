@@ -1,0 +1,85 @@
+# DRAFT for user review (Phase 1, 2026-11-25). Maps OECD DAC purpose codes and keywords to
+# Schedule VII (Companies Act 2013) top-level themes. Rules run in order; first match wins per rule type.
+# Unmatched purposes are classified in-session by Claude Code (llm.mode in_session, budget 0) and cached
+# in config/theme_overrides.csv for review.
+status: draft_for_review
+
+themes:
+  hunger_poverty_health: "Item (i): eradicating hunger, poverty and malnutrition; preventive health care; sanitation; safe drinking water"
+  education_livelihood: "Item (ii): education, special education, vocational skills, livelihood enhancement"
+  gender_equality: "Item (iii): gender equality, women empowerment, homes for women, orphans, elderly; reducing inequalities"
+  environment: "Item (iv): environmental sustainability, ecological balance, flora and fauna, agroforestry, natural resources, water"
+  heritage_culture: "Item (v): national heritage, art and culture"
+  armed_forces_veterans: "Item (vi): armed forces veterans, war widows and dependants"
+  sports: "Item (vii): rural, Paralympic, Olympic and nationally recognised sports"
+  relief_funds: "Item (viii): PM's National Relief Fund and similar government funds (incl. welfare of SC, ST, OBC, minorities, women)"
+  research_innovation: "Item (ix): incubators and R&D in science, technology, engineering and medicine"
+  rural_development: "Item (x): rural development projects"
+  slum_development: "Item (xi): slum area development"
+  disaster_management: "Item (xii): disaster management, relief, rehabilitation and reconstruction"
+
+# OECD DAC CRS purpose code prefixes (5-digit codes; longest prefix wins)
+purpose_code_prefixes:
+  "111": education_livelihood        # education, level unspecified
+  "112": education_livelihood        # basic education
+  "113": education_livelihood        # secondary education
+  "114": education_livelihood        # post-secondary
+  "121": hunger_poverty_health       # health, general
+  "122": hunger_poverty_health       # basic health
+  "123": hunger_poverty_health       # non-communicable diseases
+  "130": hunger_poverty_health       # population policies / reproductive health
+  "140": hunger_poverty_health       # water supply and sanitation
+  "14040": environment               # river basin development
+  "14015": environment               # water resources conservation
+  "151": gender_equality             # government and civil society (default; reviewed)
+  "15170": gender_equality           # women's rights organisations
+  "15180": gender_equality           # ending violence against women and girls
+  "152": other                       # conflict, peace and security
+  "160": hunger_poverty_health       # other social infrastructure and services
+  "16020": education_livelihood      # employment creation
+  "16030": slum_development          # housing policy
+  "16040": slum_development          # low-cost housing
+  "16061": heritage_culture          # culture and recreation
+  "16062": research_innovation       # statistical capacity
+  "16066": sports                    # sport for development (verify code)
+  "210": other                       # transport
+  "220": other                       # communications
+  "230": environment                 # energy (renewables mapped below)
+  "240": other                       # banking and financial services
+  "24040": education_livelihood      # informal / semi-formal financial intermediaries (microfinance)
+  "250": education_livelihood        # business and other services
+  "311": rural_development           # agriculture
+  "31130": environment               # agricultural land resources
+  "31140": environment               # agricultural water resources
+  "312": environment                 # forestry
+  "313": rural_development           # fishing
+  "321": education_livelihood        # industry
+  "322": other                       # mineral resources
+  "323": other                       # construction
+  "331": other                       # trade policy
+  "332": heritage_culture            # tourism
+  "410": environment                 # general environment protection
+  "430": rural_development           # other multisector (rural development 43040, urban 43030)
+  "43030": slum_development          # urban development
+  "43082": research_innovation       # research / scientific institutions
+  "510": other                       # general budget support
+  "520": hunger_poverty_health       # development food assistance
+  "720": disaster_management         # emergency response
+  "730": disaster_management         # reconstruction relief
+  "740": disaster_management         # disaster prevention and preparedness
+  "910": other                       # administrative costs
+  "930": hunger_poverty_health       # refugees in donor countries
+  "998": other                       # unallocated / unspecified
+
+# Keyword rules on purpose text (case-insensitive, whole-word regex). Order matters.
+keywords:
+  - {theme: disaster_management, any: ["disaster", "flood", "cyclone", "earthquake", "emergency relief", "humanitarian", "covid relief"]}
+  - {theme: hunger_poverty_health, any: ["health", "hospital", "nutrition", "malnutrition", "hunger", "sanitation", "wash", "drinking water", "maternal", "immunization", "vaccine", "tuberculosis", "malaria", "hiv", "family planning", "mental health"]}
+  - {theme: education_livelihood, any: ["education", "school", "literacy", "scholarship", "teacher", "learning", "skill", "vocational", "livelihood", "employment", "entrepreneur", "microfinance"]}
+  - {theme: gender_equality, any: ["women", "girls", "gender", "orphan", "elderly", "disability", "disabled", "inequality", "dalit", "tribal", "adivasi", "lgbt", "child protection", "child rights"]}
+  - {theme: environment, any: ["climate", "environment", "conservation", "biodiversity", "forest", "wildlife", "renewable", "solar", "clean energy", "air quality", "pollution", "water conservation", "watershed"]}
+  - {theme: rural_development, any: ["agricultur", "farmer", "rural", "village", "smallholder", "dairy", "fisheries"]}
+  - {theme: research_innovation, any: ["research", "innovation", "incubat", "science", "technology", "fellowship"]}
+  - {theme: heritage_culture, any: ["heritage", "culture", "arts", "museum", "music", "craft"]}
+  - {theme: slum_development, any: ["slum", "urban poor", "housing"]}
+  - {theme: sports, any: ["sport", "athlete", "olympic", "paralympic"]}
