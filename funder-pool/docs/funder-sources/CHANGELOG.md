@@ -19,6 +19,7 @@ Record every correction here: date, file, what changed, why.
 | 2026-11-26 | western-funders.md | irs_990pf built (990-PF Part XV from TEOS XML, foreign-address filter, India = CountryCd IN, known_zero for filers with foreign grants but none to India); BMF row given its own key irs_bmf and logged skipped; element names confirmed | IRS bulk files downloaded |
 | 2026-11-26 | western-funders.md | IRS name matching: spacing-free exact match; fuzzy duplicates queued only when names agree beyond philanthropy words (same rule in the combine step's cross-category check); Deflate64 zips read with system unzip | 647 noisy duplicate queue items and 118 cross-category pairs on the first full IRS build; Wal-Mart Foundation not merged |
 | 2026-11-26 | western-funders.md | 990-PF grants to individuals (RecipientPersonNm) stored as 'individual recipient' with no name, city or province; 964 India grant purposes the keyword rules could not map classified once in-session and stored in config/theme_overrides.csv (990:{object_id}:{grant_no}) | Rule 8: individual recipients are not on a named public list |
+| 2026-11-26 | 00-index.md | Added the export for the ingest agent (scripts/export_for_ingest.py, data/export/<date>/ with MANIFEST.json) | Lets the Sangam ingest agent reuse parsed IRS 990-PF, IATI and OECD data instead of downloading again |
 
 
 *This document was structured and edited with AI assistance but the frameworks, insights, and approaches presented are the author's own.*

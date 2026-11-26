@@ -26,6 +26,10 @@ A package of instructions, configuration and seed data for Claude Code. It build
 | tests/acceptance.md | Checks each utility must pass |
 | data/ | Git-ignored output folder. The working copy (~600 MB, without the large raw downloads) is on the team Google Shared Drive; copy it here with rsync -a or cp -p |
 
+## Export for the ingest agent
+
+`.venv/bin/python -I scripts/export_for_ingest.py` packages the funder outputs and parsed IRS 990-PF, IATI and OECD tables into data/export/<date>/ with a MANIFEST.json. See docs/funder-sources/00-index.md.
+
 ## What you get
 
 Per category: pool.csv, signals.csv, review_queue.csv, evidence.csv, sources_log.csv, ingest_queue.csv and distribution_report.md. Then a combined pool and a review workbook.

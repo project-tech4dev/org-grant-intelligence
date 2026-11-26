@@ -52,6 +52,23 @@ Related flags:
 - Do not use Kindora for bulk extraction: its terms bar bulk extraction without a partner agreement. Candid, Daanveda and Stiftungssuche are paid and out of scope.
 - Named individuals from public lists are allowed (user decision, 13 Nov 2026). Store name, rank, amount, cause, foundation and city as published, and nothing else. Legal flag: under India's DPDP Act a name is personal data, and the exemption for publicly available data is unsettled for lists compiled by a third party. Add this to the legal review that issue #324 already plans for FCRA.
 
+## Export for the ingest agent
+
+The Sangam ingest agent reads a versioned export instead of downloading and parsing the sources again. Build it after the utility builds and `combine`:
+
+    .venv/bin/python -I scripts/export_for_ingest.py        # writes data/export/<YYYY-MM-DD>/
+
+| Path | Contents |
+|---|---|
+| funders/<category>/ | pool, signals, evidence, sources_log for each of the five utilities |
+| funders/combined/ | pool_all, ingest_queue, cross_category_matches |
+| grants/irs990_returns.csv.gz, irs990_grants.csv.gz | Every extracted 990-PF return and every foreign grant (plus US grants to India intermediaries), all years, with zip, retrieved_at and file_hash. Individual recipients appear only as 'individual recipient'. |
+| grants/iati_activity.csv.gz, iati_transaction.csv.gz | IATI India activities and transactions, deduplicated as in sources/iati.py, with page and row for provenance |
+| grants/oecd_annex_b.csv | OECD PP4D Third Edition Annex B organisation list. OECD grant-level data was blocked to scripts and is not included. |
+| MANIFEST.json | Rows, bytes and sha256 per file, licences, git commit, build window, missing inputs |
+
+Not exported: data/raw (re-downloadable), third-party files in data/manual (Hurun, CSRAnalytics, MCA, OECD PDFs) and the Sangam funder export. The grant tables are not windowed; apply the window in MANIFEST.json for India totals. Refresh monthly: `scripts/download_irs.sh` fetches only new IRS zips, the extract step reuses its cache for unchanged zips, then rebuild and export again. The data flows one way: this repo never writes to Sangam.
+
 ## Source keys
 
 oecd_philanthropy, oecd_crs, irs_990pf, irs_990_sched_f, iati, threesixtygiving, uk_charity_commission, nl_anbi, hurun_india, oecd_india, foundation_site, company_site, mca_csr (already in Sangam), brsr, ngo_darpan, nabard, ministry_site, parliament_qa, devtracker, giz, fcra_disclosure, manual_seed.
