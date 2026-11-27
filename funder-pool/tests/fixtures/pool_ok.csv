@@ -1,0 +1,4 @@
+funder_id,category,name,aliases,country,website,ein,uk_charity_no,rsin,iati_org_id,oecd_donor_code,cin,funder_type_draft,money_origin_draft,india_csr_draft,parent_name,in_sangam,sources,notes
+gates--western_funders,western_funders,Bill & Melinda Gates Foundation,,US,,562618866,,,,,,private_foundation,foreign,false,,no,manual_seed,
+ciff--western_funders,western_funders,Children's Investment Fund Foundation,CIFF,GB,,,1123760,,,,,private_foundation,foreign,false,,no,manual_seed,
+ikea--western_funders,western_funders,IKEA Foundation,,NL,,,,,,,,private_foundation,foreign,false,,yes,manual_seed,

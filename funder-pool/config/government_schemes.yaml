@@ -1,0 +1,123 @@
+# government_india: agencies (funders) and the scheme pages read for them.
+# Each URL was checked on 2026-11-25 (Phase 5). The funder is the agency; schemes become programmes (help file §8).
+# page: the URL read. section: for a page that covers several schemes, a phrase that starts the scheme's text
+# (the text up to the next scheme's phrase is used). roster_only: home page, read for the agency's existence only.
+agencies:
+  - name: Ministry of Tribal Affairs
+    aliases: [MoTA]
+    schemes:
+      - scheme: Grants-in-aid to Voluntary Organisations working for the welfare of Scheduled Tribes
+        page: https://tribal.nic.in/NGO.aspx
+  - name: Department of Empowerment of Persons with Disabilities
+    aliases: [DEPwD, "Ministry of Social Justice and Empowerment (DEPwD)"]
+    schemes:
+      - scheme: Deendayal Disabled Rehabilitation Scheme (DDRS)
+        page: https://depwd.gov.in/en/ddrs/
+      - scheme: Scheme for Implementation of the Rights of Persons with Disabilities Act (SIPDA)
+        page: https://depwd.gov.in/en/schemes/
+        section: SIPDA
+      - scheme: National Action Plan for Skill Development of PwDs (NAP-SDP)
+        page: https://depwd.gov.in/en/schemes/
+        section: NAP
+  - name: National Bank for Agriculture and Rural Development
+    aliases: [NABARD]
+    source_key: nabard
+    schemes:
+      - scheme: Farm Sector Promotion Fund (FSPF)
+        page: https://www.nabard.org/content.aspx?id=579
+        section: "A. Farm Sector Promotional Fund"
+        until: "B. Watershed Development Programme"
+      - scheme: Watershed Development Fund (WDF)
+        page: https://www.nabard.org/content.aspx?id=579
+        section: "B. Watershed Development Programme"
+        until: "C. Tribal Development Fund"
+      - scheme: Tribal Development Fund (TDF)
+        page: https://www.nabard.org/content.aspx?id=579
+        section: "C. Tribal Development Fund"
+        until: "D. Producers Organisation Development Fund"
+      - scheme: Producers Organisation Development Fund (PODF)
+        page: https://www.nabard.org/content.aspx?id=579
+        section: "D. Producers Organisation Development Fund"
+        until: "E. Climate Change"
+      - scheme: Climate change funds (NABARD as National Implementing Entity; Adaptation Fund, GCF, NAFCC)
+        page: https://www.nabard.org/content.aspx?id=579
+        section: "E. Climate Change"
+  - name: Ministry of Social Justice and Empowerment
+    aliases: [MSJE]
+    schemes:
+      - scheme: Grant-in-aid schemes for voluntary organisations (MSJE scheme list)
+        page: https://socialjustice.gov.in/schemes
+      - scheme: Online grant-in-aid portal (grants-msje)
+        page: https://grants-msje.gov.in/
+  - name: Ministry of Women and Child Development
+    aliases: [MWCD]
+    schemes:
+      - scheme: Mission Shakti
+        page: https://missionshakti.wcd.gov.in/
+      - scheme: Mission Vatsalya
+        page: https://missionvatsalya.wcd.gov.in/
+      - scheme: Ministry home page
+        page: https://wcd.gov.in/
+        roster_only: true
+  - name: Ministry of Health and Family Welfare
+    aliases: [MoHFW, National AIDS Control Organisation, NACO]
+    schemes:
+      - scheme: NACO NGO and targeted intervention funding
+        page: https://naco.gov.in/
+  - name: Ministry of Environment, Forest and Climate Change
+    aliases: [MoEFCC]
+    schemes:
+      - scheme: Ministry home page
+        page: https://moef.gov.in/
+        roster_only: true
+  - name: Ministry of Rural Development
+    aliases: [MoRD, DAY-NRLM]
+    schemes:
+      - scheme: DAY-NRLM (Aajeevika)
+        page: https://aajeevika.gov.in/
+  - name: Department of Science and Technology
+    aliases: [DST]
+    schemes:
+      - scheme: Science for Equity, Empowerment and Development (SEED)
+        page: https://www.dst.gov.in/scientific-programmes/science-and-society/seed
+  - name: Department of Biotechnology
+    aliases: [DBT]
+    schemes:
+      - scheme: Department home page
+        page: https://dbtindia.gov.in/
+        roster_only: true
+  - name: Ministry of Electronics and Information Technology
+    aliases: [MeitY]
+    schemes:
+      - scheme: Ministry home page
+        page: https://www.meity.gov.in/
+        roster_only: true
+  - name: Ministry of Culture
+    aliases: [MoC]
+    schemes:
+      - scheme: Financial assistance schemes
+        page: https://www.indiaculture.gov.in/financial-assistance-schemes
+  - name: Ministry of Development of North Eastern Region
+    aliases: [DoNER, MDoNER]
+    schemes:
+      - scheme: Ministry home page
+        page: https://www.mdoner.gov.in/
+        roster_only: true
+  - name: North Eastern Council
+    aliases: [NEC]
+    schemes:
+      - scheme: Council home page
+        page: https://necouncil.gov.in/
+        roster_only: true
+  - name: North Eastern Development Finance Corporation
+    aliases: [NEDFi]
+    schemes:
+      - scheme: Corporation home page
+        page: https://www.nedfi.com/
+        roster_only: true
+  - name: Small Industries Development Bank of India
+    aliases: [SIDBI]
+    schemes:
+      - scheme: Bank home page
+        page: https://www.sidbi.in/
+        roster_only: true
