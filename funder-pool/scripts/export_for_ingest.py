@@ -5,7 +5,8 @@ Run the utility builds and `combine` first; this script only packages what they 
 
 Contents (see docs/funder-sources/00-index.md, "Export for the ingest agent"):
   funders/<category>/  pool, signals, evidence, sources_log (one folder per utility)
-  funders/combined/    pool_all, ingest_queue, cross_category_matches
+  funders/combined/    pool_all, ingest_queue, cross_category_matches,
+                       funder_pool_load (rows for Sangam's funder_pool queue table; see core/pool_load.py)
   grants/              irs990_returns, irs990_grants (all extracted years, all foreign grants plus India intermediaries),
                        iati_activity, iati_transaction (India, deduplicated), oecd_annex_b (the Annex B organisation list)
   MANIFEST.json        rows, bytes and sha256 per file, source licences, git commit, build window
@@ -26,6 +27,7 @@ sys.path.insert(0, str(ROOT / "src"))
 import pandas as pd  # noqa: E402
 
 from funder_pool.core.paths import DATA, MANUAL  # noqa: E402
+from funder_pool.core import pool_load  # noqa: E402
 from funder_pool.sources import iati, irs990  # noqa: E402
 
 UTILS = ["western", "indian_csr", "hni_family", "government_india", "bilateral_multilateral"]
@@ -80,6 +82,10 @@ def main() -> None:
             write(read(p), OUT / "funders" / "combined" / f"{name}.csv", files, "funders")
         else:
             missing.append(str(p.relative_to(DATA)))
+    p = DATA / "combined" / "pool_all.csv"
+    if p.exists():
+        write(pool_load.to_load(read(p), OUT.name), OUT / "funders" / "combined" / "funder_pool_load.csv", files,
+              "funders")
 
     rets, grants = irs990.load()
     if rets.empty:

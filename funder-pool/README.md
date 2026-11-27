@@ -28,7 +28,7 @@ A package of instructions, configuration and seed data for Claude Code. It build
 
 ## Export for the ingest agent
 
-`.venv/bin/python -I scripts/export_for_ingest.py` packages the funder outputs and parsed IRS 990-PF, IATI and OECD tables into data/export/<date>/ with a MANIFEST.json. See docs/funder-sources/00-index.md.
+`.venv/bin/python -I scripts/export_for_ingest.py` packages the funder outputs and parsed IRS 990-PF, IATI and OECD tables into data/export/<date>/ with a MANIFEST.json. It includes funders/combined/funder_pool_load.csv, the rows for a Sangam ingest queue table. See docs/funder-sources/00-index.md.
 
 ## What you get
 

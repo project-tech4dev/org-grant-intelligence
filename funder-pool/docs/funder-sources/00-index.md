@@ -62,6 +62,7 @@ The Sangam ingest agent reads a versioned export instead of downloading and pars
 |---|---|
 | funders/<category>/ | pool, signals, evidence, sources_log for each of the five utilities |
 | funders/combined/ | pool_all, ingest_queue, cross_category_matches |
+| funders/combined/funder_pool_load.csv | One row per pool funder for a Sangam queue table (funder_pool): pool_funder_id, category, name, cin, rank_in_category, score_total, csr_spend_3y_avg_cr, in_sangam_at_load, ingest_status (pending; skipped where in_sangam is yes; needs_review where related), export_version, and signals (every other non-blank pool column as JSON). It does not copy the columns of Sangam's funders table: once a funder is ingested, funders is the source of truth. Built by core/pool_load.py. |
 | grants/irs990_returns.csv.gz, irs990_grants.csv.gz | Every extracted 990-PF return and every foreign grant (plus US grants to India intermediaries), all years, with zip, retrieved_at and file_hash. Individual recipients appear only as 'individual recipient'. |
 | grants/iati_activity.csv.gz, iati_transaction.csv.gz | IATI India activities and transactions, deduplicated as in sources/iati.py, with page and row for provenance |
 | grants/oecd_annex_b.csv | OECD PP4D Third Edition Annex B organisation list. OECD grant-level data was blocked to scripts and is not included. |
