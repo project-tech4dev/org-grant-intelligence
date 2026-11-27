@@ -25,7 +25,10 @@ def _split_aliases(v) -> list[str]:
     if v is None or (isinstance(v, float) and pd.isna(v)):
         return []
     s = str(v).strip().strip("{}[]")
-    return [a.strip().strip('"\'') for a in re.split(r"[|;,]", s) if a.strip().strip('"\'')]
+    # The M11 export separates aliases with ';' and an alias may contain a comma ('JPMorgan Chase Bank N.A., India').
+    # Split on commas only when there is no ';' or '|' (Postgres array literals such as {a,b}).
+    sep = r"[|;]" if re.search(r"[|;]", s) else ","
+    return [a.strip().strip('"\'') for a in re.split(sep, s) if a.strip().strip('"\'')]
 
 
 def load(export: Path = EXPORT, partial: Path = PARTIAL_SEED) -> tuple[list[SangamFunder], str]:
@@ -54,6 +57,9 @@ def foreign_form(f: SangamFunder) -> str:
     return ""
 
 
+LEGAL_FORM = re.compile(r"\b(limited|ltd|private|pvt|llp|inc|corporation|company)\b", re.I)
+
+
 def _corporate_like(f: SangamFunder) -> bool:
     return f.funder_type in CORPORATE_TYPES or (not f.funder_type and "foundation" in f.name.lower())
 
@@ -71,9 +77,24 @@ def status(name: str, funders: list[SangamFunder], cin: str = "") -> tuple[str, 
             if f.cin and f.cin == cin:
                 return "yes", f.name
     n = matching.normalise(name)
+    # Acronym match when the name being checked is the acronym ('ABF' vs 'Axis Bank Foundation'), or when Sangam's
+    # canonical name is ('TCS', 'ITC Limited'). A short Sangam *alias* ('CF', 'RF') must not match every company
+    # with those initials.
+    # A name with a legal-form suffix ('SNF(INDIA) PRIVATE LIMITED') is a company, not an acronym of a Sangam funder.
+    short = " " not in n and not LEGAL_FORM.search(name)
     for f in funders:
-        for alias in [f.name, *f.aliases]:
-            if matching.normalise(alias) == n or matching.same_by_acronym(name, alias):
+        for i, alias in enumerate([f.name, *f.aliases]):
+            if matching.normalise(alias) == n:
+                # 'SNF(INDIA) PRIVATE LIMITED' normalises to 'snf'; a company does not match a bare acronym alias
+                if i == 0 or " " in n or not LEGAL_FORM.search(name) or LEGAL_FORM.search(alias):
+                    return "yes", f.name
+            if short and matching.same_by_acronym(name, alias):
+                return "yes", f.name
+            # Sangam's canonical name is the acronym: match the initials only, not a parenthetical
+            # ('ITC Limited' must not match 'International Trade Centre (ITC)').
+            fa = matching.normalise(alias)
+            if (i == 0 and " " not in fa and " " in n and fa == matching.acronym(name)
+                    and _corporate_like(f) and LEGAL_FORM.search(name)):
                 return "yes", f.name
     s = matching.stem(name)
     for f in funders:
